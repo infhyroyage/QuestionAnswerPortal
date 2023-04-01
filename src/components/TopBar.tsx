@@ -3,15 +3,17 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { useRecoilState } from "recoil";
 import { isDarkModeState } from "@/states/coler";
+import { TopBarProps } from "@/types/props";
+import { memo } from "react";
 
-function TopBar() {
+function TopBar({ title }: TopBarProps) {
   const [isDarkMode, setIsDarkMode] = useRecoilState<boolean>(isDarkModeState);
 
   return (
     <AppBar position="sticky">
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Question Answer Portal
+          {title}
         </Typography>
         <IconButton onClick={() => setIsDarkMode(!isDarkMode)}>
           {isDarkMode ? (
@@ -25,4 +27,4 @@ function TopBar() {
   );
 }
 
-export default TopBar;
+export default memo(TopBar);

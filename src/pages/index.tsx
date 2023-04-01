@@ -3,7 +3,7 @@ import TopBar from "@/components/TopBar";
 function Home() {
   return (
     <>
-      <TopBar />
+      <TopBar title="Question Answer Portal" />
       <div>Hello</div>
     </>
   );
