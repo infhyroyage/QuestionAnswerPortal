@@ -1,7 +1,9 @@
 import ApplyMUI from "@/components/ApplyMUI";
-import { config } from "@/services/msal";
-import { PublicClientApplication } from "@azure/msal-browser";
-import { MsalProvider } from "@azure/msal-react";
+import LoadingCenter from "@/components/LoadingCenter";
+import TopBar from "@/components/TopBar";
+import { config, loginScope } from "@/services/msal";
+import { InteractionType, PublicClientApplication } from "@azure/msal-browser";
+import { MsalAuthenticationTemplate, MsalProvider } from "@azure/msal-react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { RecoilRoot } from "recoil";
@@ -16,11 +18,18 @@ function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <RecoilRoot>
-        <MsalProvider instance={msalInstance}>
-          <ApplyMUI>
-            <Component {...pageProps} />
-          </ApplyMUI>
-        </MsalProvider>
+        <ApplyMUI>
+          <MsalProvider instance={msalInstance}>
+            <MsalAuthenticationTemplate
+              interactionType={InteractionType.Redirect}
+              authenticationRequest={loginScope}
+              loadingComponent={LoadingCenter}
+            >
+              <TopBar />
+              <Component {...pageProps} />
+            </MsalAuthenticationTemplate>
+          </MsalProvider>
+        </ApplyMUI>
       </RecoilRoot>
     </>
   );

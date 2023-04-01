@@ -9,10 +9,20 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRecoilValue } from "recoil";
 import { titleState } from "@/states/title";
+import { useMsal } from "@azure/msal-react";
 import ThemeSwitch from "./ThemeSwitch";
 
 function TopBar() {
   const title = useRecoilValue<string>(titleState);
+  const { instance } = useMsal();
+
+  const onClickLogoutButton = async () => {
+    try {
+      await instance.logoutRedirect();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <AppBar position="sticky">
@@ -23,7 +33,7 @@ function TopBar() {
         <Stack direction="row" spacing={3}>
           <ThemeSwitch />
           <Tooltip title="ログアウト">
-            <IconButton>
+            <IconButton onClick={onClickLogoutButton}>
               <LogoutIcon sx={{ color: "white" }} />
             </IconButton>
           </Tooltip>
