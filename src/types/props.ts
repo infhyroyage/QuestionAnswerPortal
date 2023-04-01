@@ -34,7 +34,3 @@ export type TestTranslationErrorContentProps = {
   >;
   setIsNotTranslatedSentences: React.Dispatch<React.SetStateAction<boolean>>;
 };
-
-export type TopBarProps = {
-  title: string;
-};
