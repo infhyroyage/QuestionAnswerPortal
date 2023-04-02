@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { IncorrectChoices, Sentence } from "./functions";
 
-export type ApplyMUIComponentProps = {
+export type ApplyMUIProps = {
   children: ReactNode;
 };
 
@@ -33,4 +33,8 @@ export type TestTranslationErrorContentProps = {
     React.SetStateAction<string[] | undefined>
   >;
   setIsNotTranslatedSentences: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type ThisLayoutProps = {
+  children: ReactNode;
 };

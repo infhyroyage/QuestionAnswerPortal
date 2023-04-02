@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react";
 import { isDarkModeState } from "@/states/color";
-import { ApplyMUIComponentProps } from "@/types/props";
+import { ApplyMUIProps } from "@/types/props";
 import { useRecoilState } from "recoil";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 
-function ApplyMUI({ children }: ApplyMUIComponentProps) {
+function ApplyMUI({ children }: ApplyMUIProps) {
   const [isDarkMode, setIsDarkMode] = useRecoilState<boolean>(isDarkModeState);
 
   const theme = useMemo(
