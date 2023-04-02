@@ -1,6 +1,11 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: false,
-};
+const withInterceptStdout = require("next-intercept-stdout");
 
-module.exports = nextConfig;
+// 下記URLの通り、Next.jsでRecoilを使用すると「Duplicate atom key」と続く意味のないエラーメッセージが出力され続けるため、
+// next-intercept-stdoutを使用して、そのエラーメッセージを表示しないように設定する
+// https://github.com/facebookexperimental/Recoil/issues/733
+module.exports = withInterceptStdout(
+  {
+    reactStrictMode: false,
+  },
+  (text) => (text.includes("Duplicate atom key") ? "" : text)
+);

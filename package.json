@@ -26,6 +26,7 @@
   "devDependencies": {
     "@types/node": "^18.15.9",
     "@types/react": "^18.0.29",
-    "@types/react-dom": "^18.0.11"
+    "@types/react-dom": "^18.0.11",
+    "next-intercept-stdout": "^1.0.1"
   }
 }
