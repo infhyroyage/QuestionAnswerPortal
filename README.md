@@ -2,17 +2,9 @@
 
 ## 初期構築
 
-### リポジトリのシークレット/変数設定
+### リポジトリの変数設定
 
-当リポジトリの Setting > Secrets And variables > Actions より、以下のシークレット/変数をすべて設定する。
-
-#### シークレット
-
-Secrets タブから「New repository secret」ボタンを押下して、下記の通りシークレットを設定する。
-
-| シークレット名                  | シークレット値                          |
-| ------------------------------- | --------------------------------------- |
-| API_MANAGEMENT_SUBSCRIPTION_KEY | API Management のサブスクリプションキー |
+当リポジトリの Setting > Secrets And variables > Actions より、以下の変数をすべて設定する。
 
 #### 変数
 

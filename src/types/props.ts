@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { IncorrectChoices, Sentence } from "./functions";
+import { IncorrectChoices, Sentence } from "./backend";
 
 export type ApplyMUIProps = {
   children: ReactNode;

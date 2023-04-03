@@ -1,7 +1,9 @@
+import { Configuration } from "@azure/msal-browser";
+
 /**
  * MSALプロバイダー使用時のコンフィグ
  */
-export const config = {
+export const config: Configuration = {
   auth: {
     clientId: `${process.env.NEXT_PUBLIC_AZURE_AD_SP_MSAL_CLIENT_ID}`,
     authority: `https://login.microsoftonline.com/${process.env.NEXT_PUBLIC_AZURE_TENANT_ID}`,
@@ -26,9 +28,9 @@ export const loginScope = {
 };
 
 /**
- * HTTPトリガーのAzure Functionsで構成したREST APIアクセスのスコープ
+ * バックエンドのREST APIアクセスのスコープ
  */
-export const functionsScopes = {
+export const backendAccessScopes = {
   accessAsUser: [
     `api://${process.env.NEXT_PUBLIC_AZURE_AD_SP_MSAL_CLIENT_ID}/access_as_user`,
   ],
