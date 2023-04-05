@@ -67,7 +67,7 @@ function Home() {
                     <ListItemIcon>
                       <ArticleIcon />
                     </ListItemIcon>
-                    <ListItemText primary={test.test} />
+                    <ListItemText primary={test.testName} />
                   </ListItemButton>
                 ))}
               </List>
