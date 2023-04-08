@@ -5,7 +5,7 @@ import { Button, Skeleton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-function testId() {
+function TestsTestId() {
   const [storedProgress, setStoredProgress] = useState<{
     isResumed: boolean;
     isStartedOther: boolean;
@@ -31,7 +31,7 @@ function testId() {
       JSON.parse(progressStr).testId === testId &&
       JSON.parse(progressStr).answers.length > 0;
     setStoredProgress({ isResumed, isStartedOther });
-  }, []);
+  }, [testId]);
 
   // クライアントサイドでの初回レンダリング時のみ[GET] /tests/{testId}を実行
   useEffect(() => {
@@ -44,7 +44,7 @@ function testId() {
       );
       setGetTestRes(res);
     })();
-  }, [accountInfo, instance]);
+  }, [accountInfo, instance, testId]);
 
   const onClickStartButton = () => {
     if (!storedProgress.isResumed) {
@@ -88,4 +88,4 @@ function testId() {
   );
 }
 
-export default testId;
+export default TestsTestId;
