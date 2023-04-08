@@ -12,6 +12,7 @@ import { GetTests, Test } from "@/types/backend";
 import { accessBackend } from "@/services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { Skeleton } from "@mui/material";
+import { useRouter } from "next/router";
 
 function Home() {
   const [opens, setOpens] = useState<boolean[]>([]);
@@ -19,6 +20,8 @@ function Home() {
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
+
+  const router = useRouter();
 
   const handleClick = (i: number) => {
     const updatedOpens = [...opens];
@@ -63,7 +66,11 @@ function Home() {
             <Collapse in={opens[i]} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 {getTestsRes[course].map((test: Test) => (
-                  <ListItemButton key={test.id} sx={{ pl: 4 }}>
+                  <ListItemButton
+                    key={test.id}
+                    sx={{ pl: 4 }}
+                    onClick={() => router.push(`/tests/${test.id}`)}
+                  >
                     <ListItemIcon>
                       <ArticleIcon />
                     </ListItemIcon>
