@@ -20,7 +20,7 @@ function ApplyMUI({ children }: ApplyMUIProps) {
   useEffect(
     () =>
       setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches),
-    []
+    [setIsDarkMode]
   );
 
   return (

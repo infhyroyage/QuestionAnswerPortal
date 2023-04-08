@@ -16,37 +16,44 @@ function TestsTestId() {
   });
 
   const router = useRouter();
-  const { testId } = router.query;
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
 
   useEffect(() => {
-    const progressStr: string | null = localStorage.getItem("progress");
+    if (router.isReady) {
+      const { testId } = router.query;
+      const progressStr: string | null = localStorage.getItem("progress");
 
-    const isStartedOther: boolean =
-      !!progressStr && JSON.parse(progressStr).testId !== testId;
-    const isResumed: boolean =
-      !!progressStr &&
-      JSON.parse(progressStr).testId === testId &&
-      JSON.parse(progressStr).answers.length > 0;
-    setStoredProgress({ isResumed, isStartedOther });
-  }, [testId]);
+      const isStartedOther: boolean =
+        !!progressStr && JSON.parse(progressStr).testId !== testId;
+      const isResumed: boolean =
+        !!progressStr &&
+        JSON.parse(progressStr).testId === testId &&
+        JSON.parse(progressStr).answers.length > 0;
+      setStoredProgress({ isResumed, isStartedOther });
+    }
+  }, [router]);
 
   // クライアントサイドでの初回レンダリング時のみ[GET] /tests/{testId}を実行
   useEffect(() => {
-    (async () => {
-      const res: GetTest = await accessBackend<GetTest>(
-        "GET",
-        `/tests/${testId}`,
-        instance,
-        accountInfo
-      );
-      setGetTestRes(res);
-    })();
-  }, [accountInfo, instance, testId]);
+    if (router.isReady) {
+      const { testId } = router.query;
+      (async () => {
+        const res: GetTest = await accessBackend<GetTest>(
+          "GET",
+          `/tests/${testId}`,
+          instance,
+          accountInfo
+        );
+        setGetTestRes(res);
+      })();
+    }
+  }, [accountInfo, instance, router]);
 
   const onClickStartButton = () => {
+    const { testId } = router.query;
+
     if (!storedProgress.isResumed) {
       localStorage.setItem(
         "progress",
