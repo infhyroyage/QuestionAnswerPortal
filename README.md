@@ -12,6 +12,6 @@ Variables タブから「New repository variable」ボタンを押下して、�
 
 | 変数名                     | 変数値                                                   |
 | -------------------------- | -------------------------------------------------------- |
-| API_MANAGEMENT_GATEWAY_URL | API Management の Gateway URL                            |
+| API_URI                    | `/api`の直前まで記載した API サーバーの URI              |
 | AZURE_AD_SP_MSAL_CLIENT_ID | Azure AD 認証認可用サービスプリンシパルのクライアント ID |
 | AZURE_TENANT_ID            | ディレクトリ ID                                          |
