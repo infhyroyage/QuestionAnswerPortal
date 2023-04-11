@@ -5,6 +5,13 @@ export type ApplyMUIProps = {
   children: ReactNode;
 };
 
+export type ChoiceCardProps = {
+  isSelected: boolean;
+  choice?: Sentence;
+  translatedText?: string;
+  onClick?: () => void;
+};
+
 export type TestChoiceContentProps = {
   choices: Sentence[];
   isCorrectedMulti: boolean;
