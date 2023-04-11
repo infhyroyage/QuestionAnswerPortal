@@ -59,8 +59,6 @@ function TestsTestId() {
         "progress",
         JSON.stringify({
           testId,
-          testName: getTestRes.testName,
-          testLength: getTestRes.length,
           answers: [],
         })
       );
@@ -71,7 +69,7 @@ function TestsTestId() {
   return (
     <>
       <Typography variant="h5" pb={3}>
-        {getTestRes.testName.length > 0 ? (
+        {getTestRes.testName.length > 0 && getTestRes.length > 0 ? (
           `${getTestRes.testName} (全${getTestRes.length}問)`
         ) : (
           <Skeleton />
@@ -85,17 +83,17 @@ function TestsTestId() {
         >
           開始
         </Button>
+        {storedProgress.isStartedOther && (
+          <Typography style={{ color: "red" }}>
+            ※最後に回答した別テストの回答データを削除して開始します
+          </Typography>
+        )}
+        {storedProgress.isResumed && (
+          <Typography style={{ color: "red" }}>
+            ※最後に回答した問題の直後から開始します
+          </Typography>
+        )}
       </Box>
-      {storedProgress.isStartedOther && (
-        <Typography style={{ color: "red" }}>
-          ※最後に回答した別テストの回答データを削除して開始します
-        </Typography>
-      )}
-      {storedProgress.isResumed && (
-        <Typography style={{ color: "red" }}>
-          ※最後に回答した問題の直後から開始します
-        </Typography>
-      )}
     </>
   );
 }
