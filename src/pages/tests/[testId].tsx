@@ -1,7 +1,7 @@
 import { accessBackend } from "@/services/backend";
 import { GetTest } from "@/types/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
-import { Button, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -70,26 +70,31 @@ function TestsTestId() {
 
   return (
     <>
-      <Typography variant="h4">
-        {getTestRes.testName.length > 0 ? getTestRes.testName : <Skeleton />}
+      <Typography variant="h5" pb={3}>
+        {getTestRes.testName.length > 0 ? (
+          `${getTestRes.testName} (全${getTestRes.length}問)`
+        ) : (
+          <Skeleton />
+        )}
       </Typography>
-      <Typography variant="h6">
-        {getTestRes.length > 0 ? `全${getTestRes.length}問` : <Skeleton />}
-      </Typography>
-      <Button
-        variant="contained"
-        onClick={onClickStartButton}
-        disabled={getTestRes.testName.length === 0 || getTestRes.length === 0}
-      >
-        開始
-      </Button>
+      <Box display="flex" justifyContent="center" alignItems="center">
+        <Button
+          variant="contained"
+          onClick={onClickStartButton}
+          disabled={getTestRes.testName.length === 0 || getTestRes.length === 0}
+        >
+          開始
+        </Button>
+      </Box>
       {storedProgress.isStartedOther && (
-        <p style={{ color: "red" }}>
+        <Typography style={{ color: "red" }}>
           ※最後に回答した別テストの回答データを削除して開始します
-        </p>
+        </Typography>
       )}
       {storedProgress.isResumed && (
-        <p style={{ color: "red" }}>※最後に回答した問題の直後から開始します</p>
+        <Typography style={{ color: "red" }}>
+          ※最後に回答した問題の直後から開始します
+        </Typography>
       )}
     </>
   );
