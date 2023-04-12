@@ -59,11 +59,13 @@ function TestsTestId() {
         "progress",
         JSON.stringify({
           testId,
+          testName: getTestRes.testName,
+          length: getTestRes.length,
           answers: [],
         })
       );
     }
-    // router.push(`/tests/${testId}/questions`);
+    router.push(`/tests/${testId}/questions`);
   };
 
   return (
@@ -83,17 +85,17 @@ function TestsTestId() {
         >
           開始
         </Button>
-        {storedProgress.isStartedOther && (
-          <Typography style={{ color: "red" }}>
-            ※最後に回答した別テストの回答データを削除して開始します
-          </Typography>
-        )}
-        {storedProgress.isResumed && (
-          <Typography style={{ color: "red" }}>
-            ※最後に回答した問題の直後から開始します
-          </Typography>
-        )}
       </Box>
+      {storedProgress.isStartedOther && (
+        <Typography style={{ color: "red" }}>
+          ※最後に回答した別テストの回答データを削除して開始します
+        </Typography>
+      )}
+      {storedProgress.isResumed && (
+        <Typography style={{ color: "red" }}>
+          ※最後に回答した問題の直後から開始します
+        </Typography>
+      )}
     </>
   );
 }
