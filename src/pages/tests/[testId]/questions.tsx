@@ -63,6 +63,10 @@ function TestsTestIdQuestions() {
   const accountInfo = useAccount(accounts[0] || {});
 
   const GenerateOnClickChoiceCard = (idx: number) => () => {
+    // 1つの問題に付き1回限りの回答とするため、回答済の場合はNOP
+    if (isLoadingSubmitButton || getQuestionAnswerRes.correctIdxes.length > 0)
+      return;
+
     let updated: number[];
     if (getQuestionRes.isCorrectedMulti) {
       const updatedSelectedIdxes: number[] = selectedIdxes.includes(idx)
@@ -78,7 +82,7 @@ function TestsTestIdQuestions() {
   };
 
   const onClickSubmitButton = async () => {
-    // 回答ボタンの押下は1つの問題あたり1回限りとする
+    // 1つの問題に付き1回限りの回答とするため、2回目以降の回答ボタン押下はNOP
     if (isLoadingSubmitButton || getQuestionAnswerRes.correctIdxes.length > 0)
       return;
 
@@ -209,7 +213,7 @@ function TestsTestIdQuestions() {
             </Fab>
           </span>
         </Tooltip>
-        <Tooltip title="回答">
+        <Tooltip title="回答" placement="top">
           <span
             style={{
               position: "absolute",
