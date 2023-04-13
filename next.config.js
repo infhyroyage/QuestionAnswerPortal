@@ -5,10 +5,13 @@ const withInterceptStdout = require("next-intercept-stdout");
 // https://github.com/facebookexperimental/Recoil/issues/733
 module.exports = withInterceptStdout(
   {
-    basePath: process.env.GITHUB_ACTIONS ? "/QuestionAnswerPortal" : undefined,
     assetPrefix: process.env.GITHUB_ACTIONS
       ? "/QuestionAnswerPortal/"
       : undefined,
+    basePath: process.env.GITHUB_ACTIONS ? "/QuestionAnswerPortal" : undefined,
+    images: {
+      unoptimized: true,
+    },
     reactStrictMode: false,
   },
   (text) => (text.includes("Duplicate atom key") ? "" : text)
