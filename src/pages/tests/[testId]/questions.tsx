@@ -1,12 +1,30 @@
-import { Box, Drawer, Fab, Skeleton, Stack, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {
+  Box,
+  CircularProgress,
+  Drawer,
+  Fab,
+  Skeleton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useAccount, useMsal } from "@azure/msal-react";
-import { GetQuestion, GetTest, Sentence } from "@/types/backend";
+import {
+  GetQuestion,
+  GetQuestionAnswer,
+  GetTest,
+  Sentence,
+} from "@/types/backend";
 import { accessBackend } from "@/services/backend";
 import ChoiceCard from "@/components/ChoiceCard";
 import Image from "next/image";
+import { Progress } from "@/types/progress";
 import LaunchIcon from "@mui/icons-material/Launch";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -18,6 +36,14 @@ const INIT_GET_QESTION_RES: GetQuestion = {
   choices: [],
   isCorrectedMulti: false,
 };
+const INIT_GET_QESTION_ANSWER_RES: GetQuestionAnswer = {
+  correctIdxes: [],
+  explanations: {
+    overall: [],
+    incorrectChoices: {},
+  },
+  references: [],
+};
 
 function TestsTestIdQuestions() {
   const [questionNumber, setQuestionNumber] =
@@ -25,9 +51,11 @@ function TestsTestIdQuestions() {
   const [getTestRes, setGetTestRes] = useState<GetTest>(INIT_GET_TEST_RES);
   const [getQuestionRes, setGetQuestionRes] =
     useState<GetQuestion>(INIT_GET_QESTION_RES);
-  const [isSelectedChoices, setIsSelectedChoices] = useState<boolean[]>([]);
-  const [isDisabledSubmitButton, setIsDisabledSubmitButton] =
-    useState<boolean>(true);
+  const [getQuestionAnswerRes, setGetQuestionAnswerRes] =
+    useState<GetQuestionAnswer>(INIT_GET_QESTION_ANSWER_RES);
+  const [selectedIdxes, setSelectedIdxes] = useState<number[]>([]);
+  const [isLoadingSubmitButton, setIsLoadingSubmitButton] =
+    useState<boolean>(false);
 
   const router = useRouter();
 
@@ -35,23 +63,68 @@ function TestsTestIdQuestions() {
   const accountInfo = useAccount(accounts[0] || {});
 
   const GenerateOnClickChoiceCard = (idx: number) => () => {
-    let updated: boolean[];
+    let updated: number[];
     if (getQuestionRes.isCorrectedMulti) {
-      updated = [...isSelectedChoices];
-      updated[idx] = !updated[idx];
+      const updatedSelectedIdxes: number[] = selectedIdxes.includes(idx)
+        ? selectedIdxes.filter((selectedIdx: number) => selectedIdx !== idx)
+        : [...selectedIdxes, idx];
+      updated = updatedSelectedIdxes.sort((a, b) =>
+        a === b ? 0 : a < b ? -1 : 1
+      );
     } else {
-      updated = new Array(getQuestionRes.choices.length).fill(false);
-      updated[idx] = true;
+      updated = [idx];
     }
-    setIsSelectedChoices(updated);
-    setIsDisabledSubmitButton(false);
+    setSelectedIdxes(updated);
   };
+
+  const onClickSubmitButton = async () => {
+    // 回答ボタンの押下は1つの問題あたり1回限りとする
+    if (isLoadingSubmitButton || getQuestionAnswerRes.correctIdxes.length > 0)
+      return;
+
+    setIsLoadingSubmitButton(true);
+
+    // [GET] /tests/{testId}/questions/{questionNumber}/answerを実行
+    const { testId } = router.query;
+    const res: GetQuestionAnswer = await accessBackend<GetQuestionAnswer>(
+      "GET",
+      `/tests/${testId}/questions/${questionNumber}/answer`,
+      instance,
+      accountInfo
+    );
+
+    // 回答結果をLocal Storageに一時保存
+    const progressStr: string | null = localStorage.getItem("progress");
+    if (!progressStr) return;
+    const progress: Progress = JSON.parse(progressStr);
+    const choices: string[] = selectedIdxes.map(
+      (selectedIdx: number) => getQuestionRes.choices[selectedIdx].sentence
+    );
+    const correctChoices: string[] = res.correctIdxes.map(
+      (correctIdx: number) => getQuestionRes.choices[correctIdx].sentence
+    );
+    const updatedProgressState: Progress = {
+      ...progress,
+      answers: [...progress.answers, { choices, correctChoices }],
+    };
+    localStorage.setItem("progress", JSON.stringify(updatedProgressState));
+
+    setGetQuestionAnswerRes(res);
+    setIsLoadingSubmitButton(false);
+  };
+
+  const isCollect: boolean = useMemo(() => {
+    if (getQuestionAnswerRes.correctIdxes.length === 0) return false;
+    return (
+      selectedIdxes.toString() === getQuestionAnswerRes.correctIdxes.toString()
+    );
+  }, [getQuestionAnswerRes, selectedIdxes]);
 
   useEffect(() => {
     const progressStr: string | null = localStorage.getItem("progress");
     if (!progressStr) return;
 
-    const progress = JSON.parse(progressStr);
+    const progress: Progress = JSON.parse(progressStr);
     setQuestionNumber(progress.answers.length + 1);
     setGetTestRes({ testName: progress.testName, length: progress.length });
   }, []);
@@ -68,7 +141,6 @@ function TestsTestIdQuestions() {
           accountInfo
         );
         setGetQuestionRes(res);
-        setIsSelectedChoices(new Array(res.choices.length).fill(false));
       })();
     }
   }, [questionNumber, instance, accountInfo, router]);
@@ -76,11 +148,18 @@ function TestsTestIdQuestions() {
   return (
     <>
       <Box
-        sx={{ flexGrow: 1, padding: 2, position: "relative", minHeight: "60%" }}
+        sx={{
+          flexGrow: 1,
+          padding: 2,
+          height: "calc(60vh - 68px)",
+          position: "relative",
+        }}
       >
         <Typography variant="h5" pb={1}>
           {getTestRes.testName.length > 0 && getTestRes.length > 0 ? (
-            `${getTestRes.testName} 問題${questionNumber} (全${getTestRes.length}問)`
+            `${getTestRes.testName} 問題${questionNumber} (全${
+              getTestRes.length
+            }問)${getQuestionRes.isCorrectedMulti ? " ※複数選択" : ""}`
           ) : (
             <Skeleton />
           )}
@@ -117,17 +196,59 @@ function TestsTestIdQuestions() {
             </Box>
           </>
         )}
-        <Fab
-          color="primary"
-          disabled={isDisabledSubmitButton}
-          sx={{
-            position: "absolute",
-            top: 12,
-            right: 20,
-          }}
-        >
-          <LaunchIcon />
-        </Fab>
+        <Tooltip title="次の問題へ" placement="top">
+          <span
+            style={{
+              position: "absolute",
+              bottom: "100px",
+              right: "20px",
+            }}
+          >
+            <Fab disabled={getQuestionAnswerRes.correctIdxes.length === 0}>
+              <NavigateNextIcon />
+            </Fab>
+          </span>
+        </Tooltip>
+        <Tooltip title="回答">
+          <span
+            style={{
+              position: "absolute",
+              bottom: "20px",
+              right: "20px",
+            }}
+          >
+            <Fab
+              color={
+                getQuestionAnswerRes.correctIdxes.length === 0
+                  ? "primary"
+                  : isCollect
+                  ? "success"
+                  : "error"
+              }
+              onClick={onClickSubmitButton}
+              disabled={selectedIdxes.length === 0}
+            >
+              {getQuestionAnswerRes.correctIdxes.length === 0 ? (
+                <LaunchIcon />
+              ) : isCollect ? (
+                <CheckIcon />
+              ) : (
+                <ClearIcon />
+              )}
+            </Fab>
+          </span>
+        </Tooltip>
+        {isLoadingSubmitButton && (
+          <CircularProgress
+            size={68}
+            sx={{
+              position: "absolute",
+              bottom: "14px",
+              right: "14px",
+              zIndex: 1,
+            }}
+          />
+        )}
       </Box>
       <Drawer
         variant="permanent"
@@ -139,15 +260,30 @@ function TestsTestIdQuestions() {
             getQuestionRes.choices.map((choice: Sentence, idx: number) => (
               <ChoiceCard
                 key={idx}
-                isSelected={isSelectedChoices[idx]}
+                isSelected={selectedIdxes.includes(idx)}
+                isCorrect={
+                  getQuestionAnswerRes.correctIdxes.length > 0 &&
+                  selectedIdxes.includes(idx) &&
+                  getQuestionAnswerRes.correctIdxes.includes(idx)
+                }
+                isIncorrect={
+                  getQuestionAnswerRes.correctIdxes.length > 0 &&
+                  selectedIdxes.includes(idx) &&
+                  !getQuestionAnswerRes.correctIdxes.includes(idx)
+                }
+                isMissed={
+                  getQuestionAnswerRes.correctIdxes.length > 0 &&
+                  !selectedIdxes.includes(idx) &&
+                  getQuestionAnswerRes.correctIdxes.includes(idx)
+                }
                 choice={choice}
                 onClick={GenerateOnClickChoiceCard(idx)}
               />
             ))
           ) : (
             <>
-              <ChoiceCard isSelected={false} />
-              <ChoiceCard isSelected={false} />
+              <ChoiceCard />
+              <ChoiceCard />
             </>
           )}
         </Stack>

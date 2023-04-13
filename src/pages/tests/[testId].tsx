@@ -1,5 +1,6 @@
 import { accessBackend } from "@/services/backend";
 import { GetTest } from "@/types/backend";
+import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
@@ -55,15 +56,13 @@ function TestsTestId() {
     const { testId } = router.query;
 
     if (!storedProgress.isResumed) {
-      localStorage.setItem(
-        "progress",
-        JSON.stringify({
-          testId,
-          testName: getTestRes.testName,
-          length: getTestRes.length,
-          answers: [],
-        })
-      );
+      const initProgress: Progress = {
+        testId: `${testId}`,
+        testName: getTestRes.testName,
+        length: getTestRes.length,
+        answers: [],
+      };
+      localStorage.setItem("progress", JSON.stringify(initProgress));
     }
     router.push(`/tests/${testId}/questions`);
   };

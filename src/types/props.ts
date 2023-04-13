@@ -6,7 +6,10 @@ export type ApplyMUIProps = {
 };
 
 export type ChoiceCardProps = {
-  isSelected: boolean;
+  isSelected?: boolean;
+  isCorrect?: boolean;
+  isIncorrect?: boolean;
+  isMissed?: boolean;
   choice?: Sentence;
   translatedText?: string;
   onClick?: () => void;

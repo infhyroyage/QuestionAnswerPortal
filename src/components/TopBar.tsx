@@ -51,7 +51,7 @@ function TopBar() {
 
   return (
     <>
-      <AppBar position="sticky">
+      <AppBar position="sticky" sx={{ height: "64px" }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             <Link
