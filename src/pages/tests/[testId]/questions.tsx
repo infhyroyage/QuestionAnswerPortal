@@ -31,6 +31,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import ExplanationsDialog from "@/components/ExplanationsDialog";
 import { SecondTranslation } from "@/types/props";
+import NotTranslatedSnackbar from "@/components/NotTranslatedSnackbar";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -431,19 +432,10 @@ function TestsTestIdQuestions() {
           )}
         </Stack>
       </Box>
-      <Snackbar
+      <NotTranslatedSnackbar
         open={!firstTranslation}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         onClose={() => setFirstTranslation(INIT_1ST_TRANSLATION)}
-      >
-        <Alert
-          onClose={() => setFirstTranslation(INIT_1ST_TRANSLATION)}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          翻訳できませんでした
-        </Alert>
-      </Snackbar>
+      />
     </Box>
   );
 }

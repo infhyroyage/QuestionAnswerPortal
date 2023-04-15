@@ -19,6 +19,7 @@ import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
 import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { accessBackend } from "@/services/backend";
+import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 
 const INIT_2ND_TRANSLATION: {
   overall: string[];
@@ -255,19 +256,10 @@ function ExplanationsDialog({
             </ul>
           </>
         )}
-        <Snackbar
+        <NotTranslatedSnackbar
           open={!secondTranslation}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
           onClose={() => setSecondTranslation(INIT_2ND_TRANSLATION)}
-        >
-          <Alert
-            onClose={() => setSecondTranslation(INIT_2ND_TRANSLATION)}
-            severity="error"
-            sx={{ width: "100%" }}
-          >
-            翻訳できませんでした
-          </Alert>
-        </Snackbar>
+        />
       </DialogContent>
     </Dialog>
   );

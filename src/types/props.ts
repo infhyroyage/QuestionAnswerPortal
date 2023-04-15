@@ -34,6 +34,11 @@ export type ExplanationsDialogProps = {
   translatedChoices?: string[];
 };
 
+export type NotTranslatedSnackbarProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
 export type TestChoiceContentProps = {
   choices: Sentence[];
   isCorrectedMulti: boolean;
