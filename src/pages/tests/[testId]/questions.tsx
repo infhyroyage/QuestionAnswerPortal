@@ -89,10 +89,9 @@ function TestsTestIdQuestions() {
     setIsLoadingSubmitButton(true);
 
     // [GET] /tests/{testId}/questions/{questionNumber}/answerを実行
-    const { testId } = router.query;
     const res: GetQuestionAnswer = await accessBackend<GetQuestionAnswer>(
       "GET",
-      `/tests/${testId}/questions/${questionNumber}/answer`,
+      `/tests/${router.query.testId}/questions/${questionNumber}/answer`,
       instance,
       accountInfo
     );
@@ -117,6 +116,22 @@ function TestsTestIdQuestions() {
     setIsLoadingSubmitButton(false);
   };
 
+  const onClickNextQuestionButton = async () => {
+    if (questionNumber === getTestRes.length) {
+      // 結果へ遷移
+      router.push(`/tests/${router.query.testId}/result`);
+    } else {
+      // 次問題へ遷移
+      setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
+      setSelectedIdxes([]);
+      setGetQuestionRes(INIT_GET_QESTION_RES);
+      setQuestionNumber(questionNumber + 1);
+    }
+  };
+
+  /**
+   * 正解した場合はtrue、未回答or不正解の場合はfalse
+   */
   const isCollect: boolean = useMemo(() => {
     if (getQuestionAnswerRes.correctIdxes.length === 0) return false;
     return (
@@ -136,11 +151,10 @@ function TestsTestIdQuestions() {
   // クライアントサイドでの初回レンダリング時のみ[GET] /tests/{testId}/questions/{questionNumber}を実行
   useEffect(() => {
     if (router.isReady && questionNumber !== INIT_QUESTION_NUMBER) {
-      const { testId } = router.query;
       (async () => {
         const res: GetQuestion = await accessBackend<GetQuestion>(
           "GET",
-          `/tests/${testId}/questions/${questionNumber}`,
+          `/tests/${router.query.testId}/questions/${questionNumber}`,
           instance,
           accountInfo
         );
@@ -200,7 +214,10 @@ function TestsTestIdQuestions() {
             </Box>
           </>
         )}
-        <Tooltip title="次の問題へ" placement="top">
+        <Tooltip
+          title={questionNumber === getTestRes.length ? "結果" : "次の問題へ"}
+          placement="top"
+        >
           <span
             style={{
               position: "absolute",
@@ -208,7 +225,10 @@ function TestsTestIdQuestions() {
               right: "20px",
             }}
           >
-            <Fab disabled={getQuestionAnswerRes.correctIdxes.length === 0}>
+            <Fab
+              onClick={onClickNextQuestionButton}
+              disabled={getQuestionAnswerRes.correctIdxes.length === 0}
+            >
               <NavigateNextIcon />
             </Fab>
           </span>
