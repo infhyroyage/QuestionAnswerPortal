@@ -2,15 +2,20 @@ import {
   Alert,
   Box,
   CircularProgress,
-  Drawer,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Fab,
+  IconButton,
+  Link,
   Skeleton,
+  Slide,
   Snackbar,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import { Ref, forwardRef, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useAccount, useMsal } from "@azure/msal-react";
 import {
@@ -29,6 +34,8 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import { TransitionProps } from "@mui/material/transitions";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -53,6 +60,15 @@ const INIT_TRANSLATERD_TEXTS: { subjects: string[]; choices: string[] } = {
   choices: [],
 };
 
+const Transition = forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 function TestsTestIdQuestions() {
   const [questionNumber, setQuestionNumber] =
     useState<number>(INIT_QUESTION_NUMBER);
@@ -67,6 +83,7 @@ function TestsTestIdQuestions() {
   const [translatedTexts, setTranslatedTexts] = useState<
     { subjects: string[]; choices: string[] } | undefined
   >(INIT_TRANSLATERD_TEXTS);
+  const [isOpenedDialog, setIsOpenedDialog] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -175,7 +192,7 @@ function TestsTestIdQuestions() {
     }
   }, [questionNumber, instance, accountInfo, router]);
 
-  // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ翻訳
+  // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ問題文・選択肢を翻訳
   useEffect(() => {
     getQuestionRes.subjects.length &&
       getQuestionRes.choices.length &&
@@ -220,6 +237,8 @@ function TestsTestIdQuestions() {
       })();
   }, [accountInfo, getQuestionRes, instance]);
 
+  // TODO 解説ダイアログを開いた直後のみ解説文・不正解の選択肢の解説文を翻訳
+
   return (
     <Box
       height="calc(100vh - 68px)"
@@ -245,13 +264,17 @@ function TestsTestIdQuestions() {
             <Skeleton />
           )}
         </Typography>
-        {getQuestionRes.subjects.length > 0 ? (
-          getQuestionRes.subjects.map((subject: Sentence, idx: number) => (
-            <Box key={idx} pt={2}>
-              {subject.isIndicatedImg ? (
-                <Image src={subject.sentence} alt={`${idx + 1}th Picture`} />
+        <Stack spacing={2}>
+          {getQuestionRes.subjects.length > 0 ? (
+            getQuestionRes.subjects.map((subject: Sentence, idx: number) =>
+              subject.isIndicatedImg ? (
+                <Image
+                  key={idx}
+                  src={subject.sentence}
+                  alt={`${idx + 1}th Picture`}
+                />
               ) : (
-                <>
+                <span key={idx}>
                   <Typography variant="body1" color="text.primary">
                     {subject.sentence || <Skeleton />}
                   </Typography>
@@ -262,50 +285,157 @@ function TestsTestIdQuestions() {
                       <Skeleton />
                     )}
                   </Typography>
-                </>
-              )}
-            </Box>
-          ))
-        ) : (
-          <>
-            <Box pt={2}>
-              <Typography variant="body1" color="text.primary">
-                <Skeleton />
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                <Skeleton />
-              </Typography>
-            </Box>
-            <Box pt={2}>
-              <Skeleton variant="rectangular" width="640px" height="480px" />
-            </Box>
-          </>
-        )}
-      </Box>
-      <Tooltip
-        title={questionNumber === getTestRes.length ? "結果" : "次の問題へ"}
-        placement="top"
-      >
-        <span
-          style={{
-            position: "absolute",
-            bottom: "calc(40% + 120px)",
-            right: "20px",
-          }}
+                </span>
+              )
+            )
+          ) : (
+            <>
+              <Box pt={2}>
+                <Typography variant="body1" color="text.primary">
+                  <Skeleton />
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  <Skeleton />
+                </Typography>
+              </Box>
+              <Box pt={2}>
+                <Skeleton variant="rectangular" width="640px" height="480px" />
+              </Box>
+            </>
+          )}
+        </Stack>
+        <Dialog
+          open={isOpenedDialog}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={() => setIsOpenedDialog(false)}
+          aria-describedby="alert-dialog-slide-description"
         >
-          <Fab
-            onClick={onClickNextQuestionButton}
-            disabled={getQuestionAnswerRes.correctIdxes.length === 0}
-          >
-            <NavigateNextIcon />
-          </Fab>
-        </span>
-      </Tooltip>
-      <Tooltip title="回答" placement="top">
+          <DialogTitle>
+            解説
+            <IconButton
+              onClick={() => setIsOpenedDialog(false)}
+              sx={{
+                position: "absolute",
+                right: 8,
+                top: 8,
+              }}
+            >
+              <ClearIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent dividers>
+            <Stack spacing={2}>
+              {getQuestionAnswerRes.explanations.overall.map(
+                (explanation: Sentence, idx: number) =>
+                  explanation.isIndicatedImg ? (
+                    <Image
+                      key={idx}
+                      src={explanation.sentence}
+                      alt={`${idx + 1}th Picture`}
+                    />
+                  ) : (
+                    <span key={idx}>
+                      <Typography variant="body1" color="text.primary">
+                        {explanation.sentence}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        <Skeleton />
+                      </Typography>
+                    </span>
+                  )
+              )}
+            </Stack>
+            {Object.keys(getQuestionAnswerRes.explanations.incorrectChoices)
+              .length > 0 && (
+              <>
+                <Typography variant="h6" pt={5}>
+                  不正解の選択肢
+                </Typography>
+                <Stack spacing={4}>
+                  {Object.keys(
+                    getQuestionAnswerRes.explanations.incorrectChoices
+                  ).map((choiceIdx: string) => (
+                    <span key={choiceIdx}>
+                      <Typography
+                        variant="body1"
+                        color="text.primary"
+                        fontWeight="bold"
+                      >
+                        {getQuestionRes.choices[Number(choiceIdx)].sentence}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        fontWeight="bold"
+                      >
+                        {translatedTexts ? (
+                          translatedTexts.choices[Number(choiceIdx)]
+                        ) : (
+                          <Skeleton />
+                        )}
+                      </Typography>
+                      <Stack spacing={2}>
+                        {getQuestionAnswerRes.explanations.incorrectChoices[
+                          Number(choiceIdx)
+                        ].map((incorrectChoice: Sentence, idx: number) =>
+                          incorrectChoice.isIndicatedImg ? (
+                            <Image
+                              key={idx}
+                              src={incorrectChoice.sentence}
+                              alt={`${idx + 1}th Picture`}
+                            />
+                          ) : (
+                            <span key={idx}>
+                              <Typography variant="body1" color="text.primary">
+                                {incorrectChoice.sentence}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                <Skeleton />
+                              </Typography>
+                            </span>
+                          )
+                        )}
+                      </Stack>
+                    </span>
+                  ))}
+                </Stack>
+              </>
+            )}
+            {getQuestionAnswerRes.references.length > 0 && (
+              <>
+                <Typography variant="h6" pt={5}>
+                  参照
+                </Typography>
+                <ul>
+                  {getQuestionAnswerRes.references.map(
+                    (reference: string, idx: number) => (
+                      <li key={idx}>
+                        <Link
+                          color="primary"
+                          href={reference}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {reference}
+                        </Link>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+      </Box>
+      <Tooltip title="回答する" placement="top">
         <span
           style={{
             position: "absolute",
-            bottom: "calc(40% + 20px)",
+            bottom: "calc(40% + 220px)",
             right: "20px",
           }}
         >
@@ -335,12 +465,47 @@ function TestsTestIdQuestions() {
           size={68}
           sx={{
             position: "absolute",
-            bottom: "14px",
+            bottom: "calc(40% + 214px)",
             right: "14px",
             zIndex: 1,
           }}
         />
       )}
+      <Tooltip title="解説を見る" placement="top">
+        <span
+          style={{
+            position: "absolute",
+            bottom: "calc(40% + 120px)",
+            right: "20px",
+          }}
+        >
+          <Fab
+            disabled={getQuestionAnswerRes.explanations.overall.length === 0}
+            onClick={() => setIsOpenedDialog(true)}
+          >
+            <QuestionMarkIcon />
+          </Fab>
+        </span>
+      </Tooltip>
+      <Tooltip
+        title={questionNumber === getTestRes.length ? "結果" : "次の問題へ"}
+        placement="top"
+      >
+        <span
+          style={{
+            position: "absolute",
+            bottom: "calc(40% + 20px)",
+            right: "20px",
+          }}
+        >
+          <Fab
+            disabled={getQuestionAnswerRes.correctIdxes.length === 0}
+            onClick={onClickNextQuestionButton}
+          >
+            <NavigateNextIcon />
+          </Fab>
+        </span>
+      </Tooltip>
       <Box
         width="100%"
         height="40%"
