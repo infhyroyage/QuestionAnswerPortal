@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 
 function TestsTestId() {
   const [storedProgress, setStoredProgress] = useState<{
-    isResumed: boolean;
-    isStartedOther: boolean;
-  }>({ isResumed: false, isStartedOther: false });
+    isResumed?: boolean;
+    isStartedOther?: boolean;
+  }>({});
   const [getTestRes, setGetTestRes] = useState<GetTest>({
     testName: "",
     length: 0,
@@ -68,8 +68,8 @@ function TestsTestId() {
   };
 
   return (
-    <>
-      <Typography variant="h5" pb={3}>
+    <Box p={2}>
+      <Typography variant="h5" pb={1}>
         {getTestRes.testName.length > 0 && getTestRes.length > 0 ? (
           `${getTestRes.testName} (全${getTestRes.length}問)`
         ) : (
@@ -80,9 +80,17 @@ function TestsTestId() {
         <Button
           variant="contained"
           onClick={onClickStartButton}
-          disabled={getTestRes.testName.length === 0 || getTestRes.length === 0}
+          disabled={
+            getTestRes.testName.length === 0 ||
+            getTestRes.length === 0 ||
+            Object.keys(storedProgress).length === 0
+          }
         >
-          開始
+          {storedProgress.isStartedOther
+            ? "削除して開始"
+            : storedProgress.isResumed
+            ? "再開"
+            : "開始"}
         </Button>
       </Box>
       {storedProgress.isStartedOther && (
@@ -95,7 +103,7 @@ function TestsTestId() {
           ※最後に回答した問題の直後から開始します
         </Typography>
       )}
-    </>
+    </Box>
   );
 }
 
