@@ -1,5 +1,6 @@
 import { ExplanationsDialogProps } from "@/types/props";
 import {
+  Alert,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -7,18 +8,19 @@ import {
   Link,
   Skeleton,
   Slide,
+  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { Ref, forwardRef, useEffect, useState } from "react";
+import { Ref, forwardRef, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
 import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { accessBackend } from "@/services/backend";
 
-const INIT_TRANSLATERD_TEXTS: {
+const INIT_2ND_TRANSLATION: {
   overall: string[];
   incorrectChoices: { [choiceIdx: string]: string[] };
 } = {
@@ -41,20 +43,19 @@ function ExplanationsDialog({
   choices,
   explanations,
   references,
+  secondTranslation,
+  setSecondTranslation,
   translatedChoices,
 }: ExplanationsDialogProps) {
-  const [translatedTexts, setTranslatedTexts] = useState<
-    | { overall: string[]; incorrectChoices: { [choiceIdx: string]: string[] } }
-    | undefined
-  >(INIT_TRANSLATERD_TEXTS);
-
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
 
-  // 解説ダイアログを開いた直後のみ解説文・不正解の選択肢の解説文を翻訳
+  // 解説ダイアログを開いた直後のみ解説文・不正解の選択肢の解説文を1度だけ翻訳
   useEffect(() => {
     explanations.overall.length > 0 &&
       open &&
+      secondTranslation &&
+      secondTranslation.overall.length === 0 &&
       (async () => {
         // overall、incorrectChoices内のそれぞれの文字列に対して翻訳を複数回行わず、
         // overall、incorrectChoices内の順で配列を作成した文字列に対して翻訳を1回のみ行う
@@ -108,12 +109,19 @@ function ExplanationsDialog({
               },
               {}
             );
-          setTranslatedTexts({ overall, incorrectChoices });
+          setSecondTranslation({ overall, incorrectChoices });
         } catch (e) {
-          setTranslatedTexts(undefined);
+          setSecondTranslation(undefined);
         }
       })();
-  }, [accountInfo, explanations, instance, open]);
+  }, [
+    accountInfo,
+    explanations,
+    instance,
+    open,
+    secondTranslation,
+    setSecondTranslation,
+  ]);
 
   return (
     <Dialog
@@ -150,8 +158,8 @@ function ExplanationsDialog({
                   {explanation.sentence}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {translatedTexts && translatedTexts.overall.length > 0 ? (
-                    translatedTexts.overall[idx]
+                  {secondTranslation && secondTranslation.overall.length > 0 ? (
+                    secondTranslation.overall[idx]
                   ) : (
                     <Skeleton />
                   )}
@@ -205,11 +213,11 @@ function ExplanationsDialog({
                                 variant="body2"
                                 color="text.secondary"
                               >
-                                {translatedTexts &&
-                                translatedTexts.incorrectChoices[
+                                {secondTranslation &&
+                                secondTranslation.incorrectChoices[
                                   Number(choiceIdx)
                                 ].length > 0 ? (
-                                  translatedTexts.incorrectChoices[
+                                  secondTranslation.incorrectChoices[
                                     Number(choiceIdx)
                                   ][idx]
                                 ) : (
@@ -247,6 +255,19 @@ function ExplanationsDialog({
             </ul>
           </>
         )}
+        <Snackbar
+          open={!secondTranslation}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          onClose={() => setSecondTranslation(INIT_2ND_TRANSLATION)}
+        >
+          <Alert
+            onClose={() => setSecondTranslation(INIT_2ND_TRANSLATION)}
+            severity="error"
+            sx={{ width: "100%" }}
+          >
+            翻訳できませんでした
+          </Alert>
+        </Snackbar>
       </DialogContent>
     </Dialog>
   );

@@ -30,6 +30,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import ExplanationsDialog from "@/components/ExplanationsDialog";
+import { SecondTranslation } from "@/types/props";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -49,9 +50,13 @@ const INIT_GET_QESTION_ANSWER_RES: GetQuestionAnswer = {
   },
   references: [],
 };
-const INIT_TRANSLATERD_TEXTS: { subjects: string[]; choices: string[] } = {
+const INIT_1ST_TRANSLATION: { subjects: string[]; choices: string[] } = {
   subjects: [],
   choices: [],
+};
+const INIT_2ND_TRANSLATION: SecondTranslation = {
+  overall: [],
+  incorrectChoices: {},
 };
 
 function TestsTestIdQuestions() {
@@ -65,11 +70,13 @@ function TestsTestIdQuestions() {
   const [selectedIdxes, setSelectedIdxes] = useState<number[]>([]);
   const [isLoadingSubmitButton, setIsLoadingSubmitButton] =
     useState<boolean>(false);
-  const [translatedTexts, setTranslatedTexts] = useState<
-    { subjects: string[]; choices: string[] } | undefined
-  >(INIT_TRANSLATERD_TEXTS);
   const [isOpenedExplanationsDialog, setIsOpenedExplanationsDialog] =
     useState<boolean>(false);
+  const [firstTranslation, setFirstTranslation] = useState<
+    { subjects: string[]; choices: string[] } | undefined
+  >(INIT_1ST_TRANSLATION);
+  const [secondTranslation, setSecondTranslation] =
+    useState<SecondTranslation>(INIT_2ND_TRANSLATION);
 
   const router = useRouter();
 
@@ -136,9 +143,10 @@ function TestsTestIdQuestions() {
       router.push(`/tests/${router.query.testId}/result`);
     } else {
       // 次問題へ遷移
+      setSecondTranslation(INIT_2ND_TRANSLATION);
       setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
       setSelectedIdxes([]);
-      setTranslatedTexts(INIT_TRANSLATERD_TEXTS);
+      setFirstTranslation(INIT_1ST_TRANSLATION);
       setGetQuestionRes(INIT_GET_QESTION_RES);
       setQuestionNumber(questionNumber + 1);
     }
@@ -216,9 +224,9 @@ function TestsTestIdQuestions() {
                 ? choices.sentence
                 : (res.shift() as string)
           );
-          setTranslatedTexts({ subjects, choices });
+          setFirstTranslation({ subjects, choices });
         } catch (e) {
-          setTranslatedTexts(undefined);
+          setFirstTranslation(undefined);
         }
       })();
   }, [accountInfo, getQuestionRes, instance]);
@@ -263,8 +271,9 @@ function TestsTestIdQuestions() {
                     {subject.sentence || <Skeleton />}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {translatedTexts && translatedTexts.subjects.length > 0 ? (
-                      translatedTexts.subjects[idx]
+                    {firstTranslation &&
+                    firstTranslation.subjects.length > 0 ? (
+                      firstTranslation.subjects[idx]
                     ) : (
                       <Skeleton />
                     )}
@@ -294,7 +303,9 @@ function TestsTestIdQuestions() {
           choices={getQuestionRes.choices}
           explanations={getQuestionAnswerRes.explanations}
           references={getQuestionAnswerRes.references}
-          translatedChoices={translatedTexts && translatedTexts.choices}
+          secondTranslation={secondTranslation}
+          setSecondTranslation={setSecondTranslation}
+          translatedChoices={firstTranslation && firstTranslation.choices}
         />
       </Box>
       <Tooltip title="回答する" placement="top">
@@ -308,7 +319,7 @@ function TestsTestIdQuestions() {
           <Fab
             color={
               getQuestionAnswerRes.correctIdxes.length === 0
-                ? "primary"
+                ? "info"
                 : isCollect
                 ? "success"
                 : "error"
@@ -346,6 +357,7 @@ function TestsTestIdQuestions() {
           }}
         >
           <Fab
+            color="info"
             disabled={getQuestionAnswerRes.explanations.overall.length === 0}
             onClick={() => setIsOpenedExplanationsDialog(true)}
           >
@@ -365,6 +377,7 @@ function TestsTestIdQuestions() {
           }}
         >
           <Fab
+            color="info"
             disabled={getQuestionAnswerRes.correctIdxes.length === 0}
             onClick={onClickNextQuestionButton}
           >
@@ -403,8 +416,8 @@ function TestsTestIdQuestions() {
                 }
                 choice={choice}
                 translatedText={
-                  translatedTexts && translatedTexts.choices.length > 0
-                    ? translatedTexts.choices[idx]
+                  firstTranslation && firstTranslation.choices.length > 0
+                    ? firstTranslation.choices[idx]
                     : undefined
                 }
                 onClick={GenerateOnClickChoiceCard(idx)}
@@ -419,12 +432,12 @@ function TestsTestIdQuestions() {
         </Stack>
       </Box>
       <Snackbar
-        open={!translatedTexts}
+        open={!firstTranslation}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        onClose={() => setTranslatedTexts(INIT_TRANSLATERD_TEXTS)}
+        onClose={() => setFirstTranslation(INIT_1ST_TRANSLATION)}
       >
         <Alert
-          onClose={() => setTranslatedTexts(INIT_TRANSLATERD_TEXTS)}
+          onClose={() => setFirstTranslation(INIT_1ST_TRANSLATION)}
           severity="error"
           sx={{ width: "100%" }}
         >

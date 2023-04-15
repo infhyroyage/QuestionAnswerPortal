@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 import { ExplanationSentences, IncorrectChoices, Sentence } from "./backend";
 
 export type ApplyMUIProps = {
@@ -15,12 +15,22 @@ export type ChoiceCardProps = {
   onClick?: () => void;
 };
 
+export type SecondTranslation =
+  | {
+      overall: string[];
+      incorrectChoices: {
+        [choiceIdx: string]: string[];
+      };
+    }
+  | undefined;
 export type ExplanationsDialogProps = {
   open: boolean;
   onClose: () => void;
   choices: Sentence[];
   explanations: ExplanationSentences;
   references: string[];
+  secondTranslation: SecondTranslation;
+  setSecondTranslation: Dispatch<SetStateAction<SecondTranslation>>;
   translatedChoices?: string[];
 };
 
