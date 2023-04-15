@@ -4,7 +4,7 @@ export type Sentence = {
   isEscapedTranslation: boolean;
 };
 export type IncorrectChoices = {
-  [choiceIdx: number]: Sentence[];
+  [choiceIdx: number]: Sentence[]; // TODO choiceIdxをstring型に変更
 };
 export type ExplanationSentences = {
   overall: Sentence[];

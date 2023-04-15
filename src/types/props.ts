@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { IncorrectChoices, Sentence } from "./backend";
+import { ExplanationSentences, IncorrectChoices, Sentence } from "./backend";
 
 export type ApplyMUIProps = {
   children: ReactNode;
@@ -13,6 +13,15 @@ export type ChoiceCardProps = {
   choice?: Sentence;
   translatedText?: string;
   onClick?: () => void;
+};
+
+export type ExplanationsDialogProps = {
+  open: boolean;
+  onClose: () => void;
+  choices: Sentence[];
+  explanations: ExplanationSentences;
+  references: string[];
+  translatedChoices?: string[];
 };
 
 export type TestChoiceContentProps = {

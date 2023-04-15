@@ -2,20 +2,14 @@ import {
   Alert,
   Box,
   CircularProgress,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Fab,
-  IconButton,
-  Link,
   Skeleton,
-  Slide,
   Snackbar,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Ref, forwardRef, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useAccount, useMsal } from "@azure/msal-react";
 import {
@@ -35,7 +29,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import { TransitionProps } from "@mui/material/transitions";
+import ExplanationsDialog from "@/components/ExplanationsDialog";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -60,15 +54,6 @@ const INIT_TRANSLATERD_TEXTS: { subjects: string[]; choices: string[] } = {
   choices: [],
 };
 
-const Transition = forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: Ref<unknown>
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
 function TestsTestIdQuestions() {
   const [questionNumber, setQuestionNumber] =
     useState<number>(INIT_QUESTION_NUMBER);
@@ -83,7 +68,8 @@ function TestsTestIdQuestions() {
   const [translatedTexts, setTranslatedTexts] = useState<
     { subjects: string[]; choices: string[] } | undefined
   >(INIT_TRANSLATERD_TEXTS);
-  const [isOpenedDialog, setIsOpenedDialog] = useState<boolean>(false);
+  const [isOpenedExplanationsDialog, setIsOpenedExplanationsDialog] =
+    useState<boolean>(false);
 
   const router = useRouter();
 
@@ -237,8 +223,6 @@ function TestsTestIdQuestions() {
       })();
   }, [accountInfo, getQuestionRes, instance]);
 
-  // TODO 解説ダイアログを開いた直後のみ解説文・不正解の選択肢の解説文を翻訳
-
   return (
     <Box
       height="calc(100vh - 68px)"
@@ -304,132 +288,14 @@ function TestsTestIdQuestions() {
             </>
           )}
         </Stack>
-        <Dialog
-          open={isOpenedDialog}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={() => setIsOpenedDialog(false)}
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle>
-            解説
-            <IconButton
-              onClick={() => setIsOpenedDialog(false)}
-              sx={{
-                position: "absolute",
-                right: 8,
-                top: 8,
-              }}
-            >
-              <ClearIcon />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent dividers>
-            <Stack spacing={2}>
-              {getQuestionAnswerRes.explanations.overall.map(
-                (explanation: Sentence, idx: number) =>
-                  explanation.isIndicatedImg ? (
-                    <Image
-                      key={idx}
-                      src={explanation.sentence}
-                      alt={`${idx + 1}th Picture`}
-                    />
-                  ) : (
-                    <span key={idx}>
-                      <Typography variant="body1" color="text.primary">
-                        {explanation.sentence}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        <Skeleton />
-                      </Typography>
-                    </span>
-                  )
-              )}
-            </Stack>
-            {Object.keys(getQuestionAnswerRes.explanations.incorrectChoices)
-              .length > 0 && (
-              <>
-                <Typography variant="h6" pt={5}>
-                  不正解の選択肢
-                </Typography>
-                <Stack spacing={4}>
-                  {Object.keys(
-                    getQuestionAnswerRes.explanations.incorrectChoices
-                  ).map((choiceIdx: string) => (
-                    <span key={choiceIdx}>
-                      <Typography
-                        variant="body1"
-                        color="text.primary"
-                        fontWeight="bold"
-                      >
-                        {getQuestionRes.choices[Number(choiceIdx)].sentence}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        fontWeight="bold"
-                      >
-                        {translatedTexts ? (
-                          translatedTexts.choices[Number(choiceIdx)]
-                        ) : (
-                          <Skeleton />
-                        )}
-                      </Typography>
-                      <Stack spacing={2}>
-                        {getQuestionAnswerRes.explanations.incorrectChoices[
-                          Number(choiceIdx)
-                        ].map((incorrectChoice: Sentence, idx: number) =>
-                          incorrectChoice.isIndicatedImg ? (
-                            <Image
-                              key={idx}
-                              src={incorrectChoice.sentence}
-                              alt={`${idx + 1}th Picture`}
-                            />
-                          ) : (
-                            <span key={idx}>
-                              <Typography variant="body1" color="text.primary">
-                                {incorrectChoice.sentence}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                <Skeleton />
-                              </Typography>
-                            </span>
-                          )
-                        )}
-                      </Stack>
-                    </span>
-                  ))}
-                </Stack>
-              </>
-            )}
-            {getQuestionAnswerRes.references.length > 0 && (
-              <>
-                <Typography variant="h6" pt={5}>
-                  参照
-                </Typography>
-                <ul>
-                  {getQuestionAnswerRes.references.map(
-                    (reference: string, idx: number) => (
-                      <li key={idx}>
-                        <Link
-                          color="primary"
-                          href={reference}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {reference}
-                        </Link>
-                      </li>
-                    )
-                  )}
-                </ul>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
+        <ExplanationsDialog
+          open={isOpenedExplanationsDialog}
+          onClose={() => setIsOpenedExplanationsDialog(false)}
+          choices={getQuestionRes.choices}
+          explanations={getQuestionAnswerRes.explanations}
+          references={getQuestionAnswerRes.references}
+          translatedChoices={translatedTexts && translatedTexts.choices}
+        />
       </Box>
       <Tooltip title="回答する" placement="top">
         <span
@@ -481,7 +347,7 @@ function TestsTestIdQuestions() {
         >
           <Fab
             disabled={getQuestionAnswerRes.explanations.overall.length === 0}
-            onClick={() => setIsOpenedDialog(true)}
+            onClick={() => setIsOpenedExplanationsDialog(true)}
           >
             <QuestionMarkIcon />
           </Fab>
