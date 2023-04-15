@@ -1,9 +1,11 @@
 import {
+  Alert,
   Box,
   CircularProgress,
   Drawer,
   Fab,
   Skeleton,
+  Snackbar,
   Stack,
   Tooltip,
   Typography,
@@ -15,6 +17,8 @@ import {
   GetQuestion,
   GetQuestionAnswer,
   GetTest,
+  PutEn2JaReq,
+  PutEn2JaRes,
   Sentence,
 } from "@/types/backend";
 import { accessBackend } from "@/services/backend";
@@ -44,6 +48,10 @@ const INIT_GET_QESTION_ANSWER_RES: GetQuestionAnswer = {
   },
   references: [],
 };
+const INIT_TRANSLATERD_TEXTS: { subjects: string[]; choices: string[] } = {
+  subjects: [],
+  choices: [],
+};
 
 function TestsTestIdQuestions() {
   const [questionNumber, setQuestionNumber] =
@@ -56,6 +64,9 @@ function TestsTestIdQuestions() {
   const [selectedIdxes, setSelectedIdxes] = useState<number[]>([]);
   const [isLoadingSubmitButton, setIsLoadingSubmitButton] =
     useState<boolean>(false);
+  const [translatedTexts, setTranslatedTexts] = useState<
+    { subjects: string[]; choices: string[] } | undefined
+  >(INIT_TRANSLATERD_TEXTS);
 
   const router = useRouter();
 
@@ -124,6 +135,7 @@ function TestsTestIdQuestions() {
       // 次問題へ遷移
       setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
       setSelectedIdxes([]);
+      setTranslatedTexts(INIT_TRANSLATERD_TEXTS);
       setGetQuestionRes(INIT_GET_QESTION_RES);
       setQuestionNumber(questionNumber + 1);
     }
@@ -163,6 +175,51 @@ function TestsTestIdQuestions() {
     }
   }, [questionNumber, instance, accountInfo, router]);
 
+  // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ翻訳
+  useEffect(() => {
+    getQuestionRes.subjects.length &&
+      getQuestionRes.choices.length &&
+      (async () => {
+        // subjects、choicesそれぞれの文字列に対して翻訳を複数回行わず、
+        // subjects、choicesの順で配列を作成した文字列に対して翻訳を1回のみ行う
+        const data: PutEn2JaReq = [
+          ...getQuestionRes.subjects
+            .filter(
+              (subject: Sentence) =>
+                !subject.isEscapedTranslation && !subject.isIndicatedImg
+            )
+            .map((subject: Sentence) => subject.sentence),
+          ...getQuestionRes.choices
+            .filter((choice: Sentence) => !choice.isEscapedTranslation)
+            .map((choice: Sentence) => choice.sentence),
+        ];
+
+        try {
+          // [PUT] /en2jpを実行
+          const res: PutEn2JaRes = await accessBackend<
+            PutEn2JaRes,
+            PutEn2JaReq
+          >("PUT", "/en2ja", instance, accountInfo, data);
+
+          const subjects: string[] = getQuestionRes.subjects.map(
+            (subject: Sentence) =>
+              subject.isEscapedTranslation || subject.isIndicatedImg
+                ? subject.sentence
+                : (res.shift() as string)
+          );
+          const choices: string[] = getQuestionRes.choices.map(
+            (choices: Sentence) =>
+              choices.isEscapedTranslation
+                ? choices.sentence
+                : (res.shift() as string)
+          );
+          setTranslatedTexts({ subjects, choices });
+        } catch (e) {
+          setTranslatedTexts(undefined);
+        }
+      })();
+  }, [accountInfo, getQuestionRes, instance]);
+
   return (
     <>
       <Box
@@ -193,7 +250,11 @@ function TestsTestIdQuestions() {
                     {subject.sentence || <Skeleton />}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    <Skeleton />
+                    {translatedTexts && translatedTexts.subjects.length > 0 ? (
+                      translatedTexts.subjects[idx]
+                    ) : (
+                      <Skeleton />
+                    )}
                   </Typography>
                 </>
               )}
@@ -301,6 +362,11 @@ function TestsTestIdQuestions() {
                   getQuestionAnswerRes.correctIdxes.includes(idx)
                 }
                 choice={choice}
+                translatedText={
+                  translatedTexts && translatedTexts.choices.length > 0
+                    ? translatedTexts.choices[idx]
+                    : undefined
+                }
                 onClick={GenerateOnClickChoiceCard(idx)}
               />
             ))
@@ -312,6 +378,18 @@ function TestsTestIdQuestions() {
           )}
         </Stack>
       </Drawer>
+      <Snackbar
+        open={!translatedTexts}
+        onClose={() => setTranslatedTexts(INIT_TRANSLATERD_TEXTS)}
+      >
+        <Alert
+          onClose={() => setTranslatedTexts(INIT_TRANSLATERD_TEXTS)}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          翻訳できませんでした
+        </Alert>
+      </Snackbar>
     </>
   );
 }

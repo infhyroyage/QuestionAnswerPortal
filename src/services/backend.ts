@@ -4,76 +4,30 @@ import {
   InteractionRequiredAuthError,
   IPublicClientApplication,
 } from "@azure/msal-browser";
-import axios, { AxiosHeaders } from "axios";
+import axios, { AxiosHeaders, AxiosResponse } from "axios";
 import { backendAccessScopes } from "./msal";
 import { Method } from "@/types/backend";
-
-/**
- * バックエンドのREST APIにアクセスする
- * @param {Method} method HTTPメソッドタイプ
- * @param {string} path パス
- * @param {IPublicClientApplication} instance MSALインスタンス
- * @param {AccountInfo | null} accountInfo ログイン済のアカウント情報
- * @returns {Promise<T>} レスポンス
- */
-export const accessBackend = async <T>(
-  method: Method,
-  path: string,
-  instance: IPublicClientApplication,
-  accountInfo: AccountInfo | null
-): Promise<T> => {
-  const apiUri = process.env.NEXT_PUBLIC_API_URI;
-  if (!apiUri) {
-    throw new Error("Unset NEXT_PUBLIC_API_URI");
-  }
-
-  // localhost環境
-  if (apiUri === "http://localhost:9229") {
-    return await callByAxios<T>(method, path);
-  }
-
-  // 非localhost環境 & ログイン済
-  const account = accountInfo === null ? undefined : accountInfo;
-
-  try {
-    const msalRes: AuthenticationResult = await instance.acquireTokenSilent({
-      scopes: backendAccessScopes.accessAsUser,
-      account,
-    });
-    return await callByAxios<T>(method, path, msalRes.accessToken);
-  } catch (err) {
-    if (err instanceof InteractionRequiredAuthError) {
-      try {
-        const msalRes: AuthenticationResult = await instance.acquireTokenPopup({
-          scopes: backendAccessScopes.accessAsUser,
-        });
-        return await callByAxios<T>(method, path, msalRes.accessToken);
-      } catch (e) {
-        throw e;
-      }
-    } else {
-      throw err;
-    }
-  }
-};
 
 /**
  * axiosを用いて、バックエンドのREST APIにアクセスしたレスポンスをそのまま返す
  * @param {Method} method HTTPメソッドタイプ
  * @param {string} path パス
  * @param {string | undefined} accessToken MSALで発行したアクセストークン
+ * @param {D | undefined} data リクエストデータ
  * @returns {Promise<T>} レスポンス
  */
-const callByAxios = async <T>(
+const callByAxios = async <T, D>(
   method: Method,
   path: string,
-  accessToken?: string | undefined
+  accessToken?: string | undefined,
+  data?: D
 ): Promise<T> => {
   try {
-    const apiUri = process.env.NEXT_PUBLIC_API_URI;
+    const apiUri: string | undefined = process.env.NEXT_PUBLIC_API_URI;
     if (!apiUri) {
       throw new Error("Unset NEXT_PUBLIC_API_URI");
     }
+    const url: string = `${apiUri}/api${path}`;
 
     // 非localhost環境のみ、アクセストークンをヘッダーに追加
     let headers: AxiosHeaders | undefined = undefined;
@@ -90,7 +44,12 @@ const callByAxios = async <T>(
     let res;
     switch (method) {
       case "GET":
-        res = await axios.get<T>(`${apiUri}/api${path}`, { headers });
+        res = await axios.get<T>(url, { headers });
+        break;
+      case "PUT":
+        res = await axios.put<T, AxiosResponse<T, D>, D>(url, data, {
+          headers,
+        });
         break;
       default:
         throw new Error(`Invalid method type: ${method}`);
@@ -102,5 +61,56 @@ const callByAxios = async <T>(
     return res.data;
   } catch (e) {
     throw e;
+  }
+};
+
+/**
+ * バックエンドのREST APIにアクセスする
+ * @param {Method} method HTTPメソッドタイプ
+ * @param {string} path パス
+ * @param {IPublicClientApplication} instance MSALインスタンス
+ * @param {AccountInfo | null} accountInfo ログイン済のアカウント情報
+ * @param {D | undefined} data リクエストデータ
+ * @returns {Promise<T>} レスポンス
+ */
+export const accessBackend = async <T, D = any>(
+  method: Method,
+  path: string,
+  instance: IPublicClientApplication,
+  accountInfo: AccountInfo | null,
+  data?: D
+): Promise<T> => {
+  const apiUri = process.env.NEXT_PUBLIC_API_URI;
+  if (!apiUri) {
+    throw new Error("Unset NEXT_PUBLIC_API_URI");
+  }
+
+  // localhost環境
+  if (apiUri === "http://localhost:9229") {
+    return await callByAxios<T, D>(method, path, undefined, data);
+  }
+
+  // 非localhost環境 & ログイン済
+  const account = accountInfo === null ? undefined : accountInfo;
+
+  try {
+    const msalRes: AuthenticationResult = await instance.acquireTokenSilent({
+      scopes: backendAccessScopes.accessAsUser,
+      account,
+    });
+    return await callByAxios<T, D>(method, path, msalRes.accessToken, data);
+  } catch (err) {
+    if (err instanceof InteractionRequiredAuthError) {
+      try {
+        const msalRes: AuthenticationResult = await instance.acquireTokenPopup({
+          scopes: backendAccessScopes.accessAsUser,
+        });
+        return await callByAxios<T, D>(method, path, msalRes.accessToken, data);
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      throw err;
+    }
   }
 };
