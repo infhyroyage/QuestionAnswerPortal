@@ -58,10 +58,14 @@ function ChoiceCard({
     >
       <CardActionArea onClick={onClick}>
         <CardContent>
-          <Typography variant="body1" color={textColor}>
+          <Typography variant="body1" color={textColor} fontWeight="bold">
             {choice ? choice.sentence : <Skeleton />}
           </Typography>
-          <Typography variant="body2" color={translatedTextColor}>
+          <Typography
+            variant="body2"
+            color={translatedTextColor}
+            fontWeight="bold"
+          >
             {translatedText ? translatedText : <Skeleton />}
           </Typography>
         </CardContent>
