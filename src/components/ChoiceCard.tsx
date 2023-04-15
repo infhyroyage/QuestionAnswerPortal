@@ -62,11 +62,7 @@ function ChoiceCard({
             {choice ? choice.sentence : <Skeleton />}
           </Typography>
           <Typography variant="body2" color={translatedTextColor}>
-            {choice && !choice.isEscapedTranslation && translatedText ? (
-              translatedText
-            ) : (
-              <Skeleton />
-            )}
+            {translatedText ? translatedText : <Skeleton />}
           </Typography>
         </CardContent>
       </CardActionArea>
