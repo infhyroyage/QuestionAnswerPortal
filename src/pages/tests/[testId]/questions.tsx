@@ -221,14 +221,20 @@ function TestsTestIdQuestions() {
   }, [accountInfo, getQuestionRes, instance]);
 
   return (
-    <>
+    <Box
+      height="calc(100vh - 68px)"
+      top={0}
+      display="flex"
+      flexDirection="column"
+      position="relative"
+    >
       <Box
-        sx={{
-          flexGrow: 1,
-          padding: 2,
-          height: "calc(60vh - 68px)",
-          position: "relative",
-        }}
+        width="100%"
+        height="60%"
+        top={0}
+        p={2}
+        position="absolute"
+        style={{ overflowY: "auto" }}
       >
         <Typography variant="h5" pb={1}>
           {getTestRes.testName.length > 0 && getTestRes.length > 0 ? (
@@ -275,72 +281,75 @@ function TestsTestIdQuestions() {
             </Box>
           </>
         )}
-        <Tooltip
-          title={questionNumber === getTestRes.length ? "結果" : "次の問題へ"}
-          placement="top"
-        >
-          <span
-            style={{
-              position: "absolute",
-              bottom: "100px",
-              right: "20px",
-            }}
-          >
-            <Fab
-              onClick={onClickNextQuestionButton}
-              disabled={getQuestionAnswerRes.correctIdxes.length === 0}
-            >
-              <NavigateNextIcon />
-            </Fab>
-          </span>
-        </Tooltip>
-        <Tooltip title="回答" placement="top">
-          <span
-            style={{
-              position: "absolute",
-              bottom: "20px",
-              right: "20px",
-            }}
-          >
-            <Fab
-              color={
-                getQuestionAnswerRes.correctIdxes.length === 0
-                  ? "primary"
-                  : isCollect
-                  ? "success"
-                  : "error"
-              }
-              onClick={onClickSubmitButton}
-              disabled={selectedIdxes.length === 0}
-            >
-              {getQuestionAnswerRes.correctIdxes.length === 0 ? (
-                <LaunchIcon />
-              ) : isCollect ? (
-                <CheckIcon />
-              ) : (
-                <ClearIcon />
-              )}
-            </Fab>
-          </span>
-        </Tooltip>
-        {isLoadingSubmitButton && (
-          <CircularProgress
-            size={68}
-            sx={{
-              position: "absolute",
-              bottom: "14px",
-              right: "14px",
-              zIndex: 1,
-            }}
-          />
-        )}
       </Box>
-      <Drawer
-        variant="permanent"
-        anchor="bottom"
-        sx={{ height: "40%", [`& .MuiDrawer-paper`]: { height: "40%" } }}
+      <Tooltip
+        title={questionNumber === getTestRes.length ? "結果" : "次の問題へ"}
+        placement="top"
       >
-        <Stack spacing={2} p={2}>
+        <span
+          style={{
+            position: "absolute",
+            bottom: "calc(40% + 120px)",
+            right: "20px",
+          }}
+        >
+          <Fab
+            onClick={onClickNextQuestionButton}
+            disabled={getQuestionAnswerRes.correctIdxes.length === 0}
+          >
+            <NavigateNextIcon />
+          </Fab>
+        </span>
+      </Tooltip>
+      <Tooltip title="回答" placement="top">
+        <span
+          style={{
+            position: "absolute",
+            bottom: "calc(40% + 20px)",
+            right: "20px",
+          }}
+        >
+          <Fab
+            color={
+              getQuestionAnswerRes.correctIdxes.length === 0
+                ? "primary"
+                : isCollect
+                ? "success"
+                : "error"
+            }
+            onClick={onClickSubmitButton}
+            disabled={selectedIdxes.length === 0}
+          >
+            {getQuestionAnswerRes.correctIdxes.length === 0 ? (
+              <LaunchIcon />
+            ) : isCollect ? (
+              <CheckIcon />
+            ) : (
+              <ClearIcon />
+            )}
+          </Fab>
+        </span>
+      </Tooltip>
+      {isLoadingSubmitButton && (
+        <CircularProgress
+          size={68}
+          sx={{
+            position: "absolute",
+            bottom: "14px",
+            right: "14px",
+            zIndex: 1,
+          }}
+        />
+      )}
+      <Box
+        width="100%"
+        height="40%"
+        bottom={0}
+        p={2}
+        position="absolute"
+        style={{ overflowY: "auto" }}
+      >
+        <Stack spacing={2}>
           {getQuestionRes.choices.length > 0 ? (
             getQuestionRes.choices.map((choice: Sentence, idx: number) => (
               <ChoiceCard
@@ -377,9 +386,10 @@ function TestsTestIdQuestions() {
             </>
           )}
         </Stack>
-      </Drawer>
+      </Box>
       <Snackbar
         open={!translatedTexts}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         onClose={() => setTranslatedTexts(INIT_TRANSLATERD_TEXTS)}
       >
         <Alert
@@ -390,7 +400,7 @@ function TestsTestIdQuestions() {
           翻訳できませんでした
         </Alert>
       </Snackbar>
-    </>
+    </Box>
   );
 }
 
