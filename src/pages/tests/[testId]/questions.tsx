@@ -1,10 +1,8 @@
 import {
-  Alert,
   Box,
   CircularProgress,
   Fab,
   Skeleton,
-  Snackbar,
   Stack,
   Tooltip,
   Typography,
@@ -16,8 +14,8 @@ import {
   GetQuestion,
   GetQuestionAnswer,
   GetTest,
-  PutEn2JaReq,
-  PutEn2JaRes,
+  PostEn2JaReq,
+  PostEn2JaRes,
   Sentence,
 } from "@/types/backend";
 import { accessBackend } from "@/services/backend";
@@ -194,7 +192,7 @@ function TestsTestIdQuestions() {
       (async () => {
         // subjects、choicesそれぞれの文字列に対して翻訳を複数回行わず、
         // subjects、choicesの順で配列を作成した文字列に対して翻訳を1回のみ行う
-        const data: PutEn2JaReq = [
+        const data: PostEn2JaReq = [
           ...getQuestionRes.subjects
             .filter(
               (subject: Sentence) =>
@@ -207,11 +205,11 @@ function TestsTestIdQuestions() {
         ];
 
         try {
-          // [PUT] /en2jpを実行
-          const res: PutEn2JaRes = await accessBackend<
-            PutEn2JaRes,
-            PutEn2JaReq
-          >("PUT", "/en2ja", instance, accountInfo, data);
+          // [POST] /en2jpを実行
+          const res: PostEn2JaRes = await accessBackend<
+            PostEn2JaRes,
+            PostEn2JaReq
+          >("POST", "/en2ja", instance, accountInfo, data);
 
           const subjects: string[] = getQuestionRes.subjects.map(
             (subject: Sentence) =>
