@@ -1,5 +1,17 @@
 import { Answer, Progress } from "@/types/progress";
-import { Box, Skeleton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 
 function TestsTestIdResult() {
@@ -9,6 +21,8 @@ function TestsTestIdResult() {
     length: 0,
     answers: [],
   });
+
+  const router = useRouter();
 
   /**
    * 正解した問題数(初期値:-1)
@@ -41,6 +55,68 @@ function TestsTestIdResult() {
           <Skeleton />
         )}
       </Typography>
+      <Box display="flex" justifyContent="center" alignItems="center" pb={2}>
+        <Button variant="contained" onClick={() => router.push("/")}>
+          タイトルへ
+        </Button>
+      </Box>
+      <TableContainer>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Typography variant="subtitle1">No.</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle1">選んだ選択肢</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle1">正解の選択肢</Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {progress.answers.map((answer: Answer, idx: number) => (
+              <TableRow
+                key={idx}
+                sx={
+                  answer.choices.toString() === answer.correctChoices.toString()
+                    ? {}
+                    : { backgroundColor: "rgba(229, 115, 115, 0.3)" }
+                }
+              >
+                <TableCell>{idx + 1}</TableCell>
+                <TableCell>
+                  {answer.choices.length > 1 ? (
+                    <ul>
+                      {answer.choices.map(
+                        (choice: string, choiceIdx: number) => (
+                          <li key={choiceIdx}>{choice}</li>
+                        )
+                      )}
+                    </ul>
+                  ) : (
+                    answer.choices[0]
+                  )}
+                </TableCell>
+                <TableCell>
+                  {answer.correctChoices.length > 1 ? (
+                    <ul>
+                      {answer.correctChoices.map(
+                        (correctChoice: string, correctChoiceIdx: number) => (
+                          <li key={correctChoiceIdx}>{correctChoice}</li>
+                        )
+                      )}
+                    </ul>
+                  ) : (
+                    answer.correctChoices[0]
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 }
