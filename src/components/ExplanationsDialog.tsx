@@ -68,7 +68,7 @@ function ExplanationsDialog({
           ...Object.keys(explanations.incorrectChoices).reduce<string[]>(
             (prev: string[], choiceIdx: string) =>
               prev.concat(
-                explanations.incorrectChoices[Number(choiceIdx)]
+                explanations.incorrectChoices[choiceIdx]
                   .filter(
                     (incorrectChoice: Sentence) =>
                       !incorrectChoice.isEscapedTranslation &&
@@ -102,13 +102,12 @@ function ExplanationsDialog({
           const incorrectChoices: { [choiceIdx: string]: string[] } =
             Object.keys(explanations.incorrectChoices).reduce(
               (prev: { [choiceIdx: string]: string[] }, choiceIdx: string) => {
-                prev[choiceIdx] = explanations.incorrectChoices[
-                  Number(choiceIdx)
-                ].map((incorrectChoice: Sentence) =>
-                  incorrectChoice.isEscapedTranslation ||
-                  incorrectChoice.isIndicatedImg
-                    ? incorrectChoice.sentence
-                    : (res.shift() as string)
+                prev[choiceIdx] = explanations.incorrectChoices[choiceIdx].map(
+                  (incorrectChoice: Sentence) =>
+                    incorrectChoice.isEscapedTranslation ||
+                    incorrectChoice.isIndicatedImg
+                      ? incorrectChoice.sentence
+                      : (res.shift() as string)
                 );
                 return prev;
               },
@@ -201,7 +200,7 @@ function ExplanationsDialog({
                       )}
                     </Typography>
                     <Stack spacing={2}>
-                      {explanations.incorrectChoices[Number(choiceIdx)].map(
+                      {explanations.incorrectChoices[choiceIdx].map(
                         (incorrectChoice: Sentence, idx: number) =>
                           incorrectChoice.isIndicatedImg ? (
                             <Image
@@ -219,12 +218,11 @@ function ExplanationsDialog({
                                 color="text.secondary"
                               >
                                 {secondTranslation &&
-                                secondTranslation.incorrectChoices[
-                                  Number(choiceIdx)
-                                ].length > 0 ? (
-                                  secondTranslation.incorrectChoices[
-                                    Number(choiceIdx)
-                                  ][idx]
+                                secondTranslation.incorrectChoices[choiceIdx]
+                                  .length > 0 ? (
+                                  secondTranslation.incorrectChoices[choiceIdx][
+                                    idx
+                                  ]
                                 ) : (
                                   <Skeleton />
                                 )}
