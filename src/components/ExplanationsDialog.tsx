@@ -234,6 +234,8 @@ function ExplanationsDialog({
                                 color="text.secondary"
                               >
                                 {secondTranslation &&
+                                choiceIdx in
+                                  secondTranslation.incorrectChoices &&
                                 secondTranslation.incorrectChoices[choiceIdx]
                                   .length > 0 ? (
                                   secondTranslation.incorrectChoices[choiceIdx][
