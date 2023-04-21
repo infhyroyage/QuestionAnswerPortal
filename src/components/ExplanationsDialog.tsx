@@ -1,5 +1,7 @@
 import { ExplanationsDialogProps } from "@/types/props";
 import {
+  Card,
+  CardContent,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -174,32 +176,46 @@ function ExplanationsDialog({
         </Stack>
         {Object.keys(explanations.incorrectChoices).length > 0 && (
           <>
-            <Typography variant="h6" pt={5}>
+            <Typography variant="h6" pt={6} pb={2}>
               不正解の選択肢
             </Typography>
             <Stack spacing={4}>
               {Object.keys(explanations.incorrectChoices).map(
                 (choiceIdx: string) => (
                   <span key={choiceIdx}>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      fontWeight="bold"
+                    <Card
+                      sx={{
+                        width: "100%",
+                        transition: "background-color 0.2s",
+                      }}
                     >
-                      {choices[Number(choiceIdx)].sentence}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      fontWeight="bold"
-                    >
-                      {translatedChoices ? (
-                        translatedChoices[Number(choiceIdx)]
-                      ) : (
-                        <Skeleton />
-                      )}
-                    </Typography>
-                    <Stack spacing={2}>
+                      <CardContent
+                        sx={{
+                          padding: 2,
+                          "&:last-child": { paddingBottom: 2 },
+                        }}
+                      >
+                        <Typography
+                          variant="body1"
+                          color="text.primary"
+                          fontWeight="bold"
+                        >
+                          {choices[Number(choiceIdx)].sentence}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          fontWeight="bold"
+                        >
+                          {translatedChoices ? (
+                            translatedChoices[Number(choiceIdx)]
+                          ) : (
+                            <Skeleton />
+                          )}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                    <Stack pt={2} spacing={2}>
                       {explanations.incorrectChoices[choiceIdx].map(
                         (incorrectChoice: Sentence, idx: number) =>
                           incorrectChoice.isIndicatedImg ? (
@@ -239,7 +255,7 @@ function ExplanationsDialog({
         )}
         {references.length > 0 && (
           <>
-            <Typography variant="h6" pt={5}>
+            <Typography variant="h6" pt={6}>
               参照
             </Typography>
             <ul>

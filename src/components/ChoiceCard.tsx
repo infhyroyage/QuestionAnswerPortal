@@ -57,7 +57,12 @@ function ChoiceCard({
       }}
     >
       <CardActionArea onClick={onClick}>
-        <CardContent>
+        <CardContent
+          sx={{
+            padding: 2,
+            "&:last-child": { paddingBottom: 2 },
+          }}
+        >
           <Typography variant="body1" color={textColor} fontWeight="bold">
             {choice ? choice.sentence : <Skeleton />}
           </Typography>
