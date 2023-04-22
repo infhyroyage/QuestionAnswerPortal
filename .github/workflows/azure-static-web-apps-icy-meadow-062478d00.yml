@@ -35,6 +35,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
+      - name: Replace Secure Environment Variables
+        run: |
+          sed -i \
+            -e 's|VALUE_OF_NEXT_PUBLIC_API_URI|${{ vars.API_URI }}|g' \
+            -e 's|VALUE_OF_NEXT_PUBLIC_AZURE_AD_SP_MSAL_CLIENT_ID|${{ vars.AZURE_AD_SP_MSAL_CLIENT_ID }}|g' \
+            -e 's|VALUE_OF_NEXT_PUBLIC_AZURE_TENANT_ID|${{ vars.AZURE_TENANT_ID }}|g' \
+            .env
+
       - name: Build and Deploy
         uses: Azure/static-web-apps-deploy@v1
         with:
