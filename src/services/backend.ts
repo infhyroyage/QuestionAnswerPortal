@@ -46,8 +46,8 @@ const callByAxios = async <T, D>(
       case "GET":
         res = await axios.get<T>(url, { headers });
         break;
-      case "POST":
-        res = await axios.post<T, AxiosResponse<T, D>, D>(url, data, {
+      case "PUT":
+        res = await axios.put<T, AxiosResponse<T, D>, D>(url, data, {
           headers,
         });
         break;
