@@ -11,11 +11,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useAccount, useMsal } from "@azure/msal-react";
 import {
-  GetEn2Ja,
   GetQuestion,
   GetQuestionAnswer,
   GetTest,
-  Headers,
+  PostEn2JaReq,
+  PostEn2JaRes,
   Sentence,
 } from "@/types/backend";
 import { accessBackend } from "@/services/backend";
@@ -192,7 +192,7 @@ function TestsTestIdQuestions() {
       (async () => {
         // subjects、choicesそれぞれの文字列に対して翻訳を複数回行わず、
         // subjects、choicesの順で配列を作成した文字列に対して翻訳を1回のみ行う
-        const texts: string[] = [
+        const data: PostEn2JaReq = [
           ...getQuestionRes.subjects
             .filter(
               (subject: Sentence) =>
@@ -205,17 +205,11 @@ function TestsTestIdQuestions() {
         ];
 
         try {
-          // [GET] /en2jpを実行
-          const headers: Headers = {
-            texts: JSON.stringify(texts),
-          };
-          const res: GetEn2Ja = await accessBackend<GetEn2Ja>(
-            "GET",
-            "/en2ja",
-            instance,
-            accountInfo,
-            headers
-          );
+          // [POST] /en2jpを実行
+          const res: PostEn2JaRes = await accessBackend<
+            PostEn2JaRes,
+            PostEn2JaReq
+          >("POST", "/en2ja", instance, accountInfo, data);
 
           const subjects: string[] = getQuestionRes.subjects.map(
             (subject: Sentence) =>

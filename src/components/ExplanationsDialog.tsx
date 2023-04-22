@@ -15,7 +15,7 @@ import {
 import { TransitionProps } from "@mui/material/transitions";
 import { Ref, forwardRef, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { GetEn2Ja, Headers, Sentence } from "@/types/backend";
+import { PostEn2JaReq, PostEn2JaRes, Sentence } from "@/types/backend";
 import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { accessBackend } from "@/services/backend";
@@ -60,7 +60,7 @@ function ExplanationsDialog({
       (async () => {
         // overall、incorrectChoices内のそれぞれの文字列に対して翻訳を複数回行わず、
         // overall、incorrectChoices内の順で配列を作成した文字列に対して翻訳を1回のみ行う
-        const texts: string[] = [
+        const data: PostEn2JaReq = [
           ...explanations.overall
             .filter(
               (sentence: Sentence) =>
@@ -83,17 +83,11 @@ function ExplanationsDialog({
         ];
 
         try {
-          // [GET] /en2jpを実行
-          const headers: Headers = {
-            texts: JSON.stringify(texts),
-          };
-          const res: GetEn2Ja = await accessBackend<GetEn2Ja>(
-            "GET",
-            "/en2ja",
-            instance,
-            accountInfo,
-            headers
-          );
+          // [POST] /en2jpを実行
+          const res: PostEn2JaRes = await accessBackend<
+            PostEn2JaRes,
+            PostEn2JaReq
+          >("POST", "/en2ja", instance, accountInfo, data);
 
           const overall: string[] = explanations.overall.map(
             (sentence: Sentence) =>
