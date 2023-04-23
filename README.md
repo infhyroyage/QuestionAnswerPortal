@@ -2,7 +2,7 @@
 
 ## 概要
 
-[Microsoft ID Platform](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-overview)経由で認証認可を行ったもと、API サーバーの結果レスポンスから Web アプリケーションを構成する Web サーバー。
+[Microsoft ID Platform](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-overview)経由で認証認可を行ったもと、API サーバーの結果レスポンスから Web アプリケーションを構成する。
 
 ## 使用する主要なパッケージのバージョン
 
