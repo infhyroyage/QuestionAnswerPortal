@@ -4,28 +4,10 @@ on:
   push:
     branches:
       - main
-    paths:
-      - .github/workflows/azure-static-web-apps-icy-meadow-062478d00.yml
-      - public**
-      - src**
-      - .env
-      - next.config.js
-      - package-lock.json
-      - package.json
-      - tsconfig.json
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
-    paths:
-      - .github/workflows/azure-static-web-apps-icy-meadow-062478d00.yml
-      - public**
-      - src**
-      - .env
-      - next.config.js
-      - package-lock.json
-      - package.json
-      - tsconfig.json
 
 jobs:
   build-deploy-swa:
