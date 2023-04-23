@@ -2,7 +2,7 @@
 
 ## 概要
 
-[Microsoft ID Platform](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-overview)経由の認証認可を行うことができる API サーバーと連携する、[Azure Static Web App](https://azure.microsoft.com/ja-jp/products/app-service/static)上の Web アプリケーションを構成する Web サーバー。
+[Microsoft ID Platform](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-overview)経由で認証認可を行ったもと、API サーバーの結果レスポンスから Web アプリケーションを構成する Web サーバー。
 
 ## 使用する主要なパッケージのバージョン
 
@@ -15,7 +15,7 @@
 
 ## 初期構築
 
-事前に API サーバー・Azure Static Web App をデプロイした前提のもと、Web アプリケーションを構築する事前準備として、以下の順で初期構築を必ずすべて行う必要がある。
+事前に API サーバーをデプロイした前提のもと、GitHub Pages を構築する事前準備として、以下の順で初期構築を必ずすべて行う必要がある。
 
 1. Microsoft ID Platform 認証認可用サービスプリンシパルの発行
 2. リポジトリの変数設定
@@ -30,7 +30,7 @@
    - Supported account types : `Accounts in this organizational directory only`
    - Redirect URI : `Single-page application(SPA)`(左) と `http://localhost:3000`(右)
 3. 登録して自動遷移した「QATranslator_MSAL」の Overview にある「Application (client) ID」の値(=クライアント ID)を手元に控える。
-4. Authentication > Single-page application にある 「Add URI」を押下して、Redirect URIs にあるリストに`https://icy-meadow-062478d00.3.azurestaticapps.net`を追加し、Save ボタンを押下する。
+4. Authentication > Single-page application にある 「Add URI」を押下して、Redirect URIs にあるリストに`https://infhyroyage.github.io/QuestionAnswerPortal`を追加し、Save ボタンを押下する。
 5. Expose an API > Application ID URI の右にある小さな文字「Set」を押下し、Application ID URI の入力欄に`api://{3で手元に控えたクライアントID}`が自動反映されていることを確認し、Save ボタンを押下する。
 6. Expose an API > Scopes defined by this API にある「Add a scope」を押下し、以下の項目を入力後、Save ボタンを押下する。
    - Scope name : `access_as_user`
@@ -47,21 +47,9 @@
    4. Add permissions ボタンを押下。
 8. Manifest から JSON 形式のマニフェストを表示し、`"accessTokenAcceptedVersion"`の値を`null`から`2`に変更する。
 
-### 2. リポジトリのシークレット・変数設定
+### 2. リポジトリの変数設定
 
-QuestionAnswerPortal リポジトリの Setting > Secrets And variables > Actions より、以下のシークレット・変数をすべて設定する。
-
-#### シークレット
-
-Secrets タブから「New repository secret」ボタンを押下して、下記の通り変数をすべて設定する。
-
-| シークレット名             | シークレット値                          |
-| -------------------------- | --------------------------------------- |
-| AZURE_SWA_DEPLOYMENT_TOKEN | Azure Static Web App のデプロイトークン |
-
-#### 変数
-
-Variables タブから「New repository variable」ボタンを押下して、下記の通り変数をすべて設定する。
+QuestionAnswerPortal リポジトリの Setting > Secrets And variables > Actions の Variables タブから「New repository variable」ボタンを押下して、下記の通り変数をすべて設定する。
 
 | 変数名                     | 変数値                                                                                        |
 | -------------------------- | --------------------------------------------------------------------------------------------- |
@@ -73,7 +61,7 @@ Variables タブから「New repository variable」ボタンを押下して、�
 
 初期構築以前の完全なクリーンな状態に戻すためには、初期構築で行ったサービスプリンシパル・変数それぞれを以下の順で削除すれば良い。
 
-1. リポジトリの各シークレット・変数の削除
+1. リポジトリの各シークレット・変数
 2. Microsoft ID Platform 認証認可用サービスプリンシパルの削除
 
 ### 1. リポジトリのシークレット・変数の削除
