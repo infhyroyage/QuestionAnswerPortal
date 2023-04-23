@@ -57,6 +57,33 @@ QuestionAnswerPortal リポジトリの Setting > Secrets And variables > Action
 | AZURE_AD_SP_MSAL_CLIENT_ID | 1.で発行した QATranslator_MSAL のクライアント ID                                              |
 | AZURE_TENANT_ID            | Azure ディレクトリ ID                                                                         |
 
+## localhost 環境構築
+
+GitHub Pages を構築せず、localhost の 3000 番のポート上で Web サーバーを起動することもできる。
+以下では、localhost の 9229 番のポート上で API サーバーを起動したもとで、localhost に Web サーバーを構築・削除する手順を示す。
+
+### 構築手順
+
+1. 以下を記述したファイル`.env.local`を QuestionAnswerPortal リポジトリ直下に保存する。
+   ```
+   NEXT_PUBLIC_API_URI="http://localhost:9229"
+   NEXT_PUBLIC_AZURE_AD_APP_REDIRECT_URI="http://localhost:3000"
+   NEXT_PUBLIC_AZURE_AD_SP_MSAL_CLIENT_ID="(初期構築の1.で発行したQATranslator_MSALのクライアントID)"
+   NEXT_PUBLIC_AZURE_TENANT_ID="(AzureディレクトリID)"
+   ```
+2. ターミナルを起動して以下のコマンドを実行し、npm パッケージをインストールする。
+   ```bash
+   npm i
+   ```
+3. 2 のターミナルで以下のコマンドを実行し、localhost に Web サーバーを起動する。実行したターミナルはそのまま放置する。
+   ```bash
+   npm run dev
+   ```
+
+### 削除手順
+
+構築手順の 3 で実行したターミナルに対して Ctrl+C キーを入力すると、localhost に起動した Web サーバーを停止・削除できる。
+
 ## 完全初期化
 
 初期構築以前の完全なクリーンな状態に戻すためには、初期構築で行ったサービスプリンシパル・変数それぞれを以下の順で削除すれば良い。
