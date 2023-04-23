@@ -66,11 +66,13 @@ function TopBar() {
           </Typography>
           <Stack direction="row" spacing={3}>
             <ThemeSwitch />
-            <Tooltip title="ログアウト">
-              <IconButton onClick={onClickLogoutButton}>
-                <LogoutIcon sx={{ color: "white" }} />
-              </IconButton>
-            </Tooltip>
+            {process.env.NEXT_PUBLIC_API_URI !== "http://localhost:9229" && (
+              <Tooltip title="ログアウト">
+                <IconButton onClick={onClickLogoutButton}>
+                  <LogoutIcon sx={{ color: "white" }} />
+                </IconButton>
+              </Tooltip>
+            )}
           </Stack>
         </Toolbar>
       </AppBar>

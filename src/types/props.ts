@@ -1,6 +1,10 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import { ExplanationSentences, Sentence } from "./backend";
 
+export type ApplyMSALProps = {
+  children: ReactNode;
+};
+
 export type ApplyMUIProps = {
   children: ReactNode;
 };
