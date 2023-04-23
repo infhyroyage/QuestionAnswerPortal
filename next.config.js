@@ -8,7 +8,6 @@ module.exports = withInterceptStdout(
     images: {
       unoptimized: true,
     },
-    output: "standalone",
     reactStrictMode: false,
   },
   (text) => (text.includes("Duplicate atom key") ? "" : text)
