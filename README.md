@@ -61,12 +61,12 @@ QuestionAnswerPortal リポジトリの Setting > Secrets And variables > Action
 
 初期構築以前の完全なクリーンな状態に戻すためには、初期構築で行ったサービスプリンシパル・変数それぞれを以下の順で削除すれば良い。
 
-1. リポジトリの各シークレット・変数
+1. リポジトリの各シークレット・変数の削除
 2. Microsoft ID Platform 認証認可用サービスプリンシパルの削除
 
-### 1. リポジトリのシークレット・変数の削除
+### 1. リポジトリの変数の削除
 
-QuestionAnswerPortal リポジトリの Setting > Secrets And variables > Actions より、Secrets・Variables タブから初期構築時に設定した各シークレット・変数に対し、ゴミ箱のボタンを押下する。
+QuestionAnswerPortal リポジトリの Setting > Secrets And variables > Actions より、Variables タブから初期構築時に設定した各変数に対し、ゴミ箱のボタンを押下する。
 
 ### 2. Microsoft ID Platform 認証認可用サービスプリンシパルの削除
 
