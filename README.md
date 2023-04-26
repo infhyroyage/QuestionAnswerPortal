@@ -80,6 +80,10 @@ GitHub Pages を構築せず、localhost の 3000 番のポート上で Web サ�
 
 構築手順の 3 で実行したターミナルに対して Ctrl+C キーを入力すると、localhost に起動した Web サーバーを停止・削除できる。
 
+## API サーバーの API リファレンス
+
+[Swagger](https://github.com/infhyroyage/QuestionAnswerPortal/blob/main/swagger.yaml)参照。
+
 ## 完全初期化
 
 初期構築以前の完全なクリーンな状態に戻すためには、初期構築で行ったサービスプリンシパル・変数それぞれを以下の順で削除すれば良い。
