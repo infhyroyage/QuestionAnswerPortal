@@ -42,7 +42,3 @@ export type NotTranslatedSnackbarProps = {
   open: boolean;
   onClose: () => void;
 };
-
-export type ThisLayoutProps = {
-  children: ReactNode;
-};

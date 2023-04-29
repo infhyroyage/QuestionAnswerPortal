@@ -16,6 +16,7 @@ import ThemeSwitch from "./ThemeSwitch";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Head from "next/head";
 
 function TopBar() {
   const [isShownProgress, setIsShownProgress] = useState<boolean>(false);
@@ -51,6 +52,9 @@ function TopBar() {
 
   return (
     <>
+      <Head>
+        <title>{title}</title>
+      </Head>
       <AppBar position="sticky" sx={{ height: "64px" }}>
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
