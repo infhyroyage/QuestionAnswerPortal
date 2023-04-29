@@ -9,8 +9,6 @@ import {
   Typography,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useRecoilValue } from "recoil";
-import { titleState } from "@/states/title";
 import { useMsal } from "@azure/msal-react";
 import ThemeSwitch from "./ThemeSwitch";
 import { useRouter } from "next/router";
@@ -20,8 +18,6 @@ import Head from "next/head";
 
 function TopBar() {
   const [isShownProgress, setIsShownProgress] = useState<boolean>(false);
-
-  const title = useRecoilValue<string>(titleState);
 
   const router = useRouter();
 
@@ -54,7 +50,7 @@ function TopBar() {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{title}</title>
+        <title>Question Answer Portal</title>
       </Head>
       <AppBar position="sticky" sx={{ height: "64px" }}>
         <Toolbar>
@@ -66,7 +62,7 @@ function TopBar() {
                 textDecoration: "none",
               }}
             >
-              {title}
+              Question Answer Portal
             </Link>
           </Typography>
           <Stack direction="row" spacing={3}>
