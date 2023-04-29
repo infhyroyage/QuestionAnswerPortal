@@ -53,6 +53,7 @@ function TopBar() {
   return (
     <>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title}</title>
       </Head>
       <AppBar position="sticky" sx={{ height: "64px" }}>
