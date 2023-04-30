@@ -298,7 +298,7 @@ function TestsTestIdQuestions() {
                 </Typography>
               </Box>
               <Box pt={2}>
-                <Skeleton variant="rectangular" width="640px" height="480px" />
+                <Skeleton variant="rectangular" width={160} height={120} />
               </Box>
             </>
           )}
