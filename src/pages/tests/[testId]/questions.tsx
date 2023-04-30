@@ -30,6 +30,9 @@ import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import ExplanationsDialog from "@/components/ExplanationsDialog";
 import { SecondTranslation } from "@/types/props";
 import NotTranslatedSnackbar from "@/components/NotTranslatedSnackbar";
+import BackdropImage from "@/components/BackdropImage";
+import { backdropImageSrcState } from "@/states/backdropImageSrc";
+import { useSetRecoilState } from "recoil";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -76,6 +79,7 @@ function TestsTestIdQuestions() {
   >(INIT_1ST_TRANSLATION);
   const [secondTranslation, setSecondTranslation] =
     useState<SecondTranslation>(INIT_2ND_TRANSLATION);
+  const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
 
   const router = useRouter();
 
@@ -263,6 +267,9 @@ function TestsTestIdQuestions() {
                   key={idx}
                   src={subject.sentence}
                   alt={`${idx + 1}th Picture`}
+                  width={160}
+                  height={120}
+                  onClick={() => setBackdropSrc(subject.sentence)}
                 />
               ) : (
                 <span key={idx}>
@@ -296,16 +303,6 @@ function TestsTestIdQuestions() {
             </>
           )}
         </Stack>
-        <ExplanationsDialog
-          open={isOpenedExplanationsDialog}
-          onClose={() => setIsOpenedExplanationsDialog(false)}
-          choices={getQuestionRes.choices}
-          explanations={getQuestionAnswerRes.explanations}
-          references={getQuestionAnswerRes.references}
-          secondTranslation={secondTranslation}
-          setSecondTranslation={setSecondTranslation}
-          translatedChoices={firstTranslation && firstTranslation.choices}
-        />
       </Box>
       <Tooltip title="回答する" placement="top">
         <span
@@ -433,6 +430,17 @@ function TestsTestIdQuestions() {
           )}
         </Stack>
       </Box>
+      <ExplanationsDialog
+        open={isOpenedExplanationsDialog}
+        onClose={() => setIsOpenedExplanationsDialog(false)}
+        choices={getQuestionRes.choices}
+        explanations={getQuestionAnswerRes.explanations}
+        references={getQuestionAnswerRes.references}
+        secondTranslation={secondTranslation}
+        setSecondTranslation={setSecondTranslation}
+        translatedChoices={firstTranslation && firstTranslation.choices}
+      />
+      <BackdropImage />
       <NotTranslatedSnackbar
         open={!firstTranslation}
         onClose={() => setFirstTranslation(INIT_1ST_TRANSLATION)}

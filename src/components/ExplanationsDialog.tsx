@@ -20,6 +20,8 @@ import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
+import { useSetRecoilState } from "recoil";
+import { backdropImageSrcState } from "@/states/backdropImageSrc";
 
 const INIT_2ND_TRANSLATION: {
   overall: string[];
@@ -50,6 +52,7 @@ function ExplanationsDialog({
 }: ExplanationsDialogProps) {
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
+  const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
 
   // 解説ダイアログを開いた直後のみ解説文・不正解の選択肢の解説文を1度だけ翻訳
   useEffect(() => {
@@ -151,6 +154,9 @@ function ExplanationsDialog({
                 key={idx}
                 src={explanation.sentence}
                 alt={`${idx + 1}th Picture`}
+                width={160}
+                height={120}
+                onClick={() => setBackdropSrc(explanation.sentence)}
               />
             ) : (
               <span key={idx}>
@@ -217,6 +223,11 @@ function ExplanationsDialog({
                               key={idx}
                               src={incorrectChoice.sentence}
                               alt={`${idx + 1}th Picture`}
+                              width={160}
+                              height={120}
+                              onClick={() =>
+                                setBackdropSrc(incorrectChoice.sentence)
+                              }
                             />
                           ) : (
                             <span key={idx}>
