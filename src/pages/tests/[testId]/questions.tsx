@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   CircularProgress,
   Fab,
@@ -326,6 +325,7 @@ function TestsTestIdQuestions() {
             }
             onClick={onClickSubmitButton}
             disabled={selectedIdxes.length === 0}
+            sx={{ zIndex: (theme) => theme.zIndex.tooltip }}
           >
             {getQuestionAnswerRes.correctIdxes.length === 0 ? (
               <LaunchIcon />
@@ -344,7 +344,7 @@ function TestsTestIdQuestions() {
             position: "absolute",
             bottom: "calc(40% + 214px)",
             right: "14px",
-            zIndex: 1,
+            zIndex: (theme) => theme.zIndex.tooltip,
           }}
         />
       )}
@@ -360,6 +360,7 @@ function TestsTestIdQuestions() {
             color="info"
             disabled={getQuestionAnswerRes.explanations.overall.length === 0}
             onClick={() => setIsOpenedExplanationsDialog(true)}
+            sx={{ zIndex: (theme) => theme.zIndex.tooltip }}
           >
             <QuestionMarkIcon />
           </Fab>
@@ -380,6 +381,7 @@ function TestsTestIdQuestions() {
             color="info"
             disabled={getQuestionAnswerRes.correctIdxes.length === 0}
             onClick={onClickNextQuestionButton}
+            sx={{ zIndex: (theme) => theme.zIndex.tooltip }}
           >
             <NavigateNextIcon />
           </Fab>

@@ -53,7 +53,7 @@ function TopBar() {
         <title>Question Answer Portal</title>
       </Head>
       <AppBar position="sticky" sx={{ height: "64px" }}>
-        <Toolbar>
+        <Toolbar sx={{ height: "100%" }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             <Link
               href="/"
