@@ -132,6 +132,7 @@ function ExplanationsDialog({
       TransitionComponent={Transition}
       keepMounted
       onClose={onClose}
+      sx={{ zIndex: (theme) => theme.zIndex.tooltip + 1 }}
     >
       <DialogTitle>
         解説

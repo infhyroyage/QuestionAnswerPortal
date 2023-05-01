@@ -12,7 +12,7 @@ function BackdropImage() {
     <Backdrop
       open={backdropSrc.length > 0}
       onClick={() => setBackdropSrc("")}
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      sx={{ zIndex: (theme) => theme.zIndex.tooltip + 1 }}
     >
       {backdropSrc.length > 0 && (
         <Image
