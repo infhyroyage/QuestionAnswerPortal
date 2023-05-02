@@ -50,11 +50,11 @@
 
 QuestionAnswerPortal リポジトリの Setting > Secrets And variables > Actions の Variables タブから「New repository variable」ボタンを押下して、下記の通り変数をすべて設定する。
 
-| 変数名                     | 変数値                                                                                        |
-| -------------------------- | --------------------------------------------------------------------------------------------- |
-| API_URI                    | `https://example.com/api`をエンドポイントに持つ API サーバーのオリジン(=`https//example.com`) |
-| AZURE_AD_SP_MSAL_CLIENT_ID | 1.で発行した QATranslator_MSAL のクライアント ID                                              |
-| AZURE_TENANT_ID            | Azure ディレクトリ ID                                                                         |
+| 変数名                     | 変数値                                                                |
+| -------------------------- | --------------------------------------------------------------------- |
+| API_URI                    | オリジン先で`/api`のパスをエンドポイントに持つ API サーバーのオリジン |
+| AZURE_AD_SP_MSAL_CLIENT_ID | 1.で発行した QATranslator_MSAL のクライアント ID                      |
+| AZURE_TENANT_ID            | Azure ディレクトリ ID                                                 |
 
 ## localhost 環境構築
 
@@ -63,7 +63,8 @@ GitHub Pages を構築せず、localhost の 3000 番のポート上で Web サ�
 
 ### 構築手順
 
-1. 以下を記述したファイル`.env.local`を QuestionAnswerPortal リポジトリ直下に保存する。
+1. 環境変数`NEXT_PUBLIC_API_URI`に API サーバーのオリジンを記載したファイル`.env.local`を、QuestionAnswerPortal リポジトリ直下に保存する。
+   例えば、API サーバーを localhost の 9229 番のポート上で起動し、`http://localhost:9229/api`をエンドポイントに持つ場合、以下の通りに指定する。
    ```
    NEXT_PUBLIC_API_URI="http://localhost:9229"
    ```
