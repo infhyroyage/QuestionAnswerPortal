@@ -1,5 +1,7 @@
 # QuestionAnswerPortal
 
+[![Build and Deploy Question Answer Portal to GitHub Pages](https://github.com/infhyroyage/QuestionAnswerPortal/actions/workflows/build-deploy-pages.yaml/badge.svg)](https://github.com/infhyroyage/QuestionAnswerPortal/actions/workflows/build-deploy-pages.yaml)
+
 ## 概要
 
 [Microsoft ID Platform](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-overview)経由で認証認可を行ったもと、[QuestionAnswerSwagger](https://github.com/infhyroyage/QuestionAnswerSwagger)に従った API サーバーのレスポンスから Web アプリケーションを構成する。
