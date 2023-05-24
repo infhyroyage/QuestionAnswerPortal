@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -16,13 +16,21 @@ updates:
     reviewers:
       - "infhyroyage"
 
-  - package-ecosystem: "github-actions"
+  - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "saturday"
       time: "10:00"
       timezone: "Asia/Tokyo"
+    ignore:
+      - dependency-name: "@types/node"
+      - dependency-name: "@types/react"
+      - dependency-name: "@types/react-dom"
+      - dependency-name: "next"
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "typescript"
     labels: [ ]
     reviewers:
       - "infhyroyage"
