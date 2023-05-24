@@ -12,6 +12,8 @@ updates:
       day: "saturday"
       time: "09:00"
       timezone: "Asia/Tokyo"
+    assignees:
+      - "infhyroyage"
     labels: [ ]
     reviewers:
       - "infhyroyage"
@@ -23,6 +25,8 @@ updates:
       day: "saturday"
       time: "10:00"
       timezone: "Asia/Tokyo"
+    assignees:
+      - "infhyroyage"
     ignore:
       - dependency-name: "@types/node"
       - dependency-name: "@types/react"
