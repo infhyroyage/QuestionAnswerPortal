@@ -355,7 +355,12 @@ function TestsTestIdQuestions() {
         >
           <Fab
             color="info"
-            disabled={getQuestionAnswerRes.explanations.overall.length === 0}
+            disabled={
+              getQuestionAnswerRes.explanations.overall.length === 0 &&
+              Object.keys(getQuestionAnswerRes.explanations.incorrectChoices)
+                .length === 0 &&
+              getQuestionAnswerRes.references.length === 0
+            }
             onClick={() => setIsOpenedExplanationsDialog(true)}
             sx={{ zIndex: (theme) => theme.zIndex.tooltip }}
           >

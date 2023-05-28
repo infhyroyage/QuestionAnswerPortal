@@ -4,8 +4,7 @@ import {
   CardContent,
   Dialog,
   DialogContent,
-  DialogTitle,
-  IconButton,
+  Divider,
   Link,
   Skeleton,
   Slide,
@@ -14,7 +13,6 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { Ref, forwardRef, useEffect } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
 import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
@@ -134,154 +132,153 @@ function ExplanationsDialog({
       onClose={onClose}
       sx={{ zIndex: (theme) => theme.zIndex.tooltip + 1 }}
     >
-      <DialogTitle>
-        解説
-        <IconButton
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
       <DialogContent dividers>
-        <Stack spacing={2}>
-          {explanations.overall.map((explanation: Sentence, idx: number) =>
-            explanation.isIndicatedImg ? (
-              <Image
-                key={idx}
-                src={explanation.sentence}
-                alt={`${idx + 1}th Picture`}
-                width={160}
-                height={120}
-                onClick={() => setBackdropSrc(explanation.sentence)}
-              />
-            ) : (
-              <span key={idx}>
-                <Typography variant="body1" color="text.primary">
-                  {explanation.sentence}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {secondTranslation && secondTranslation.overall.length > 0 ? (
-                    secondTranslation.overall[idx]
-                  ) : (
-                    <Skeleton />
-                  )}
-                </Typography>
-              </span>
-            )
-          )}
-        </Stack>
-        {Object.keys(explanations.incorrectChoices).length > 0 && (
-          <>
-            <Typography variant="h6" pt={6} pb={2}>
-              不正解の選択肢
-            </Typography>
-            <Stack spacing={4}>
-              {Object.keys(explanations.incorrectChoices).map(
-                (choiceIdx: string) => (
-                  <span key={choiceIdx}>
-                    <Card
-                      sx={{
-                        width: "100%",
-                        transition: "background-color 0.2s",
-                      }}
-                    >
-                      <CardContent
-                        sx={{
-                          padding: 2,
-                          "&:last-child": { paddingBottom: 2 },
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          color="text.primary"
-                          fontWeight="bold"
-                        >
-                          {choices[Number(choiceIdx)].sentence}
+        <Stack spacing={2} divider={<Divider />}>
+          {explanations.overall.length > 0 && (
+            <div>
+              <Typography variant="h6" pb={2}>
+                解説
+              </Typography>
+              <Stack spacing={2}>
+                {explanations.overall.map(
+                  (explanation: Sentence, idx: number) =>
+                    explanation.isIndicatedImg ? (
+                      <Image
+                        key={idx}
+                        src={explanation.sentence}
+                        alt={`${idx + 1}th Picture`}
+                        width={160}
+                        height={120}
+                        onClick={() => setBackdropSrc(explanation.sentence)}
+                      />
+                    ) : (
+                      <div key={idx}>
+                        <Typography variant="body1" color="text.primary">
+                          {explanation.sentence}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          fontWeight="bold"
-                        >
-                          {translatedChoices ? (
-                            translatedChoices[Number(choiceIdx)]
+                        <Typography variant="body2" color="text.secondary">
+                          {secondTranslation &&
+                          secondTranslation.overall.length > 0 ? (
+                            secondTranslation.overall[idx]
                           ) : (
                             <Skeleton />
                           )}
                         </Typography>
-                      </CardContent>
-                    </Card>
-                    <Stack pt={2} spacing={2}>
-                      {explanations.incorrectChoices[choiceIdx].map(
-                        (incorrectChoice: Sentence, idx: number) =>
-                          incorrectChoice.isIndicatedImg ? (
-                            <Image
-                              key={idx}
-                              src={incorrectChoice.sentence}
-                              alt={`${idx + 1}th Picture`}
-                              width={160}
-                              height={120}
-                              onClick={() =>
-                                setBackdropSrc(incorrectChoice.sentence)
-                              }
-                            />
-                          ) : (
-                            <span key={idx}>
-                              <Typography variant="body1" color="text.primary">
-                                {incorrectChoice.sentence}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                {secondTranslation &&
-                                choiceIdx in
-                                  secondTranslation.incorrectChoices &&
-                                secondTranslation.incorrectChoices[choiceIdx]
-                                  .length > 0 ? (
-                                  secondTranslation.incorrectChoices[choiceIdx][
-                                    idx
-                                  ]
-                                ) : (
-                                  <Skeleton />
-                                )}
-                              </Typography>
-                            </span>
-                          )
-                      )}
-                    </Stack>
-                  </span>
-                )
-              )}
-            </Stack>
-          </>
-        )}
-        {references.length > 0 && (
-          <>
-            <Typography variant="h6" pt={6}>
-              参照
-            </Typography>
-            <ul>
-              {references.map((reference: string, idx: number) => (
-                <li key={idx}>
-                  <Link
-                    color="primary"
-                    href={reference}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {reference}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
+                      </div>
+                    )
+                )}
+              </Stack>
+            </div>
+          )}
+          {Object.keys(explanations.incorrectChoices).length > 0 && (
+            <div>
+              <Typography variant="h6" pb={2}>
+                不正解の選択肢
+              </Typography>
+              <Stack spacing={4}>
+                {Object.keys(explanations.incorrectChoices).map(
+                  (choiceIdx: string) => (
+                    <div key={choiceIdx}>
+                      <Card
+                        sx={{
+                          width: "100%",
+                          transition: "background-color 0.2s",
+                        }}
+                      >
+                        <CardContent
+                          sx={{
+                            padding: 2,
+                            "&:last-child": { paddingBottom: 2 },
+                          }}
+                        >
+                          <Typography
+                            variant="body1"
+                            color="text.primary"
+                            fontWeight="bold"
+                          >
+                            {choices[Number(choiceIdx)].sentence}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            fontWeight="bold"
+                          >
+                            {translatedChoices ? (
+                              translatedChoices[Number(choiceIdx)]
+                            ) : (
+                              <Skeleton />
+                            )}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                      <Stack pt={2} spacing={2}>
+                        {explanations.incorrectChoices[choiceIdx].map(
+                          (incorrectChoice: Sentence, idx: number) =>
+                            incorrectChoice.isIndicatedImg ? (
+                              <Image
+                                key={idx}
+                                src={incorrectChoice.sentence}
+                                alt={`${idx + 1}th Picture`}
+                                width={160}
+                                height={120}
+                                onClick={() =>
+                                  setBackdropSrc(incorrectChoice.sentence)
+                                }
+                              />
+                            ) : (
+                              <div key={idx}>
+                                <Typography
+                                  variant="body1"
+                                  color="text.primary"
+                                >
+                                  {incorrectChoice.sentence}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                >
+                                  {secondTranslation &&
+                                  choiceIdx in
+                                    secondTranslation.incorrectChoices &&
+                                  secondTranslation.incorrectChoices[choiceIdx]
+                                    .length > 0 ? (
+                                    secondTranslation.incorrectChoices[
+                                      choiceIdx
+                                    ][idx]
+                                  ) : (
+                                    <Skeleton />
+                                  )}
+                                </Typography>
+                              </div>
+                            )
+                        )}
+                      </Stack>
+                    </div>
+                  )
+                )}
+              </Stack>
+            </div>
+          )}
+          {references.length > 0 && (
+            <div>
+              <Typography variant="h6">参照</Typography>
+              <ul>
+                {references.map((reference: string, idx: number) => (
+                  <li key={idx}>
+                    <Link
+                      color="primary"
+                      href={reference}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {reference}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </Stack>
         <NotTranslatedSnackbar
           open={!secondTranslation}
           onClose={() => setSecondTranslation(INIT_2ND_TRANSLATION)}
