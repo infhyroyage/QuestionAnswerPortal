@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@azure/msal-browser": "^2.34.0",
+    "@azure/msal-browser": "^2.37.1",
     "@azure/msal-react": "^1.5.7",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
