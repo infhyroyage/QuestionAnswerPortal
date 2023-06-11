@@ -13,20 +13,28 @@ import { accessBackend } from "@/services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { Skeleton } from "@mui/material";
 import { useRouter } from "next/router";
+import { useSetRecoilState } from "recoil";
+import { topBarTitleState } from "@/states/TopBarTitle";
 
 function Home() {
   const [opens, setOpens] = useState<boolean[]>([]);
   const [getTestsRes, setGetTestsRes] = useState<GetTests>({});
+  const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
 
   const router = useRouter();
 
-  const handleClick = (i: number) => {
+  const handleClickOuterListItemButton = (i: number) => {
     const updatedOpens = [...opens];
     updatedOpens[i] = !updatedOpens[i];
     setOpens(updatedOpens);
+  };
+
+  const handleClickInnerListItemButton = (test: Test) => {
+    setTopBarTitle(test.testName);
+    router.push(`/tests/${test.id}`);
   };
 
   // クライアントサイドでの初回レンダリング時のみ[GET] /testsを実行
@@ -50,7 +58,7 @@ function Home() {
         Object.keys(getTestsRes).map((course: string, i: number) => (
           <React.Fragment key={course}>
             <ListItemButton
-              onClick={() => handleClick(i)}
+              onClick={() => handleClickOuterListItemButton(i)}
               sx={{ height: "60px" }}
               divider
             >
@@ -69,7 +77,7 @@ function Home() {
                   <ListItemButton
                     key={test.id}
                     sx={{ pl: 4 }}
-                    onClick={() => router.push(`/tests/${test.id}`)}
+                    onClick={() => handleClickInnerListItemButton(test)}
                   >
                     <ListItemIcon>
                       <ArticleIcon />

@@ -12,12 +12,16 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useMsal } from "@azure/msal-react";
 import ThemeSwitch from "./ThemeSwitch";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import { topBarTitleState } from "@/states/TopBarTitle";
+import BackspaceIcon from "@mui/icons-material/Backspace";
+import { useRecoilState } from "recoil";
 
 function TopBar() {
   const [isShownProgress, setIsShownProgress] = useState<boolean>(false);
+  const [topBarTitle, setTopBarTitle] =
+    useRecoilState<string>(topBarTitleState);
 
   const router = useRouter();
 
@@ -29,6 +33,11 @@ function TopBar() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const onClickBackspaceButton = () => {
+    setTopBarTitle("Question Answer Portal");
+    router.push("/");
   };
 
   const handleRouteChangeShow = () => setIsShownProgress(true);
@@ -55,24 +64,24 @@ function TopBar() {
       <AppBar position="sticky" sx={{ height: "64px" }}>
         <Toolbar sx={{ height: "100%" }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            <Link
-              href="/"
-              style={{
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              Question Answer Portal
-            </Link>
+            {topBarTitle}
           </Typography>
           <Stack direction="row" spacing={3}>
-            <ThemeSwitch />
-            {process.env.NEXT_PUBLIC_API_URI !== "http://localhost:9229" && (
-              <Tooltip title="ログアウト">
-                <IconButton onClick={onClickLogoutButton}>
-                  <LogoutIcon sx={{ color: "white" }} />
+            {topBarTitle === "Question Answer Portal" && <ThemeSwitch />}
+            {topBarTitle !== "Question Answer Portal" ? (
+              <Tooltip title="タイトルへ">
+                <IconButton onClick={onClickBackspaceButton}>
+                  <BackspaceIcon sx={{ color: "white" }} />
                 </IconButton>
               </Tooltip>
+            ) : (
+              process.env.NEXT_PUBLIC_API_URI !== "http://localhost:9229" && (
+                <Tooltip title="ログアウト">
+                  <IconButton onClick={onClickLogoutButton}>
+                    <LogoutIcon sx={{ color: "white" }} />
+                  </IconButton>
+                </Tooltip>
+              )
             )}
           </Stack>
         </Toolbar>

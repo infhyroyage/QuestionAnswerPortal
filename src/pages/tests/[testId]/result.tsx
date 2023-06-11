@@ -1,3 +1,4 @@
+import { topBarTitleState } from "@/states/TopBarTitle";
 import { Answer, Progress } from "@/types/progress";
 import {
   Box,
@@ -13,6 +14,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import { useSetRecoilState } from "recoil";
 
 function TestsTestIdResult() {
   const [progress, setProgress] = useState<Progress>({
@@ -21,6 +23,7 @@ function TestsTestIdResult() {
     length: 0,
     answers: [],
   });
+  const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
 
   const router = useRouter();
 
@@ -35,6 +38,11 @@ function TestsTestIdResult() {
             answer.choices.toString() === answer.correctChoices.toString()
         ).length;
   }, [progress]);
+
+  const onClickBackspaceButton = () => {
+    setTopBarTitle("Question Answer Portal");
+    router.push("/");
+  };
 
   useEffect(() => {
     const progressStr: string | null = localStorage.getItem("progress");
@@ -56,7 +64,7 @@ function TestsTestIdResult() {
         )}
       </Typography>
       <Box display="flex" justifyContent="center" alignItems="center" pb={2}>
-        <Button variant="contained" onClick={() => router.push("/")}>
+        <Button variant="contained" onClick={onClickBackspaceButton}>
           タイトルへ
         </Button>
       </Box>
