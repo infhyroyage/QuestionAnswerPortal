@@ -1,10 +1,12 @@
 import { accessBackend } from "@/services/backend";
+import { topBarTitleState } from "@/states/TopBarTitle";
 import { GetTest } from "@/types/backend";
 import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
-import { Box, Button, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 
 function TestsTestId() {
   const [storedProgress, setStoredProgress] = useState<{
@@ -15,11 +17,29 @@ function TestsTestId() {
     testName: "",
     length: 0,
   });
+  const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
 
   const router = useRouter();
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
+
+  const onClickStartButton = () => {
+    const { testId } = router.query;
+
+    if (!storedProgress.isResumed) {
+      const initProgress: Progress = {
+        testId: `${testId}`,
+        testName: getTestRes.testName,
+        length: getTestRes.length,
+        answers: [],
+      };
+      localStorage.setItem("progress", JSON.stringify(initProgress));
+    }
+
+    setTopBarTitle(`(1/${getTestRes.length}) ${getTestRes.testName}`);
+    router.push(`/tests/${testId}/questions`);
+  };
 
   useEffect(() => {
     if (router.isReady) {
@@ -52,30 +72,8 @@ function TestsTestId() {
     }
   }, [accountInfo, instance, router]);
 
-  const onClickStartButton = () => {
-    const { testId } = router.query;
-
-    if (!storedProgress.isResumed) {
-      const initProgress: Progress = {
-        testId: `${testId}`,
-        testName: getTestRes.testName,
-        length: getTestRes.length,
-        answers: [],
-      };
-      localStorage.setItem("progress", JSON.stringify(initProgress));
-    }
-    router.push(`/tests/${testId}/questions`);
-  };
-
   return (
     <Box p={2}>
-      <Typography variant="h5" pb={1}>
-        {getTestRes.testName.length > 0 && getTestRes.length > 0 ? (
-          `${getTestRes.testName} (全${getTestRes.length}問)`
-        ) : (
-          <Skeleton />
-        )}
-      </Typography>
       <Box display="flex" justifyContent="center" alignItems="center">
         <Button
           variant="contained"

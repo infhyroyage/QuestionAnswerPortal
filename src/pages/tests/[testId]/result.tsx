@@ -27,6 +27,11 @@ function TestsTestIdResult() {
 
   const router = useRouter();
 
+  const onClickBackspaceButton = () => {
+    setTopBarTitle("Question Answer Portal");
+    router.push("/");
+  };
+
   /**
    * 正解した問題数(初期値:-1)
    */
@@ -39,11 +44,6 @@ function TestsTestIdResult() {
         ).length;
   }, [progress]);
 
-  const onClickBackspaceButton = () => {
-    setTopBarTitle("Question Answer Portal");
-    router.push("/");
-  };
-
   useEffect(() => {
     const progressStr: string | null = localStorage.getItem("progress");
     if (!progressStr) return;
@@ -54,20 +54,20 @@ function TestsTestIdResult() {
 
   return (
     <Box p={2}>
-      <Typography variant="h5" pb={1}>
-        {progress.testName.length > 0 &&
-        progress.length > 0 &&
-        correctLength > -1 ? (
-          `${progress.testName} (全${progress.length}問中${correctLength}問正解)`
-        ) : (
-          <Skeleton />
-        )}
-      </Typography>
-      <Box display="flex" justifyContent="center" alignItems="center" pb={2}>
+      <Box display="flex" justifyContent="center" alignItems="center" pb={1}>
         <Button variant="contained" onClick={onClickBackspaceButton}>
           タイトルへ
         </Button>
       </Box>
+      <Typography variant="h5" pb={2}>
+        {progress.testName.length > 0 &&
+        progress.length > 0 &&
+        correctLength > -1 ? (
+          `全${progress.length}問中${correctLength}問正解`
+        ) : (
+          <Skeleton />
+        )}
+      </Typography>
       <TableContainer>
         <Table stickyHeader>
           <TableHead>

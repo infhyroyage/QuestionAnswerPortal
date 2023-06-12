@@ -33,6 +33,7 @@ import NotTranslatedSnackbar from "@/components/NotTranslatedSnackbar";
 import BackdropImage from "@/components/BackdropImage";
 import { backdropImageSrcState } from "@/states/backdropImageSrc";
 import { useSetRecoilState } from "recoil";
+import { topBarTitleState } from "@/states/TopBarTitle";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -79,6 +80,7 @@ function TestsTestIdQuestions() {
   >(INIT_1ST_TRANSLATION);
   const [secondTranslation, setSecondTranslation] =
     useState<SecondTranslation>(INIT_2ND_TRANSLATION);
+  const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
   const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
 
   const router = useRouter();
@@ -143,9 +145,11 @@ function TestsTestIdQuestions() {
   const onClickNextQuestionButton = async () => {
     if (questionNumber === getTestRes.length) {
       // 結果へ遷移
+      setTopBarTitle(getTestRes.testName);
       router.push(`/tests/${router.query.testId}/result`);
     } else {
       // 次問題へ遷移
+      setTopBarTitle(`(${questionNumber + 1}/${getTestRes.length}) ${getTestRes.testName}`);
       setSecondTranslation(INIT_2ND_TRANSLATION);
       setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
       setSelectedIdxes([]);
@@ -250,15 +254,6 @@ function TestsTestIdQuestions() {
         position="absolute"
         style={{ overflowY: "auto" }}
       >
-        <Typography variant="h5" pb={1}>
-          {getTestRes.testName.length > 0 && getTestRes.length > 0 ? (
-            `${getTestRes.testName} 問題${questionNumber} (全${
-              getTestRes.length
-            }問)${getQuestionRes.isCorrectedMulti ? " ※複数選択" : ""}`
-          ) : (
-            <Skeleton />
-          )}
-        </Typography>
         <Stack spacing={2}>
           {getQuestionRes.subjects.length > 0 ? (
             getQuestionRes.subjects.map((subject: Sentence, idx: number) =>
