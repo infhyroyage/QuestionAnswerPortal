@@ -8,11 +8,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 
+const INIT_QUESTION_NUMBER: number = 0;
+
 function TestsTestId() {
-  const [storedProgress, setStoredProgress] = useState<{
-    isResumed?: boolean;
-    isStartedOther?: boolean;
-  }>({});
+  const [questionNumber, setQuestionNumber] =
+    useState<number>(INIT_QUESTION_NUMBER);
+  const [isStartedOther, setIsStartedOther] = useState<boolean>(false);
   const [getTestRes, setGetTestRes] = useState<GetTest>({
     testName: "",
     length: 0,
@@ -27,7 +28,7 @@ function TestsTestId() {
   const onClickStartButton = () => {
     const { testId } = router.query;
 
-    if (!storedProgress.isResumed) {
+    if (questionNumber === 1) {
       const initProgress: Progress = {
         testId: `${testId}`,
         testName: getTestRes.testName,
@@ -37,7 +38,9 @@ function TestsTestId() {
       localStorage.setItem("progress", JSON.stringify(initProgress));
     }
 
-    setTopBarTitle(`(1/${getTestRes.length}) ${getTestRes.testName}`);
+    setTopBarTitle(
+      `(${questionNumber}/${getTestRes.length}) ${getTestRes.testName}`
+    );
     router.push(`/tests/${testId}/questions`);
   };
 
@@ -46,13 +49,14 @@ function TestsTestId() {
       const { testId } = router.query;
       const progressStr: string | null = localStorage.getItem("progress");
 
-      const isStartedOther: boolean =
-        !!progressStr && JSON.parse(progressStr).testId !== testId;
-      const isResumed: boolean =
-        !!progressStr &&
-        JSON.parse(progressStr).testId === testId &&
-        JSON.parse(progressStr).answers.length > 0;
-      setStoredProgress({ isResumed, isStartedOther });
+      setIsStartedOther(
+        !!progressStr && JSON.parse(progressStr).testId !== testId
+      );
+      setQuestionNumber(
+        !!progressStr && JSON.parse(progressStr).testId === testId
+          ? JSON.parse(progressStr).answers.length + 1
+          : 1
+      );
     }
   }, [router]);
 
@@ -81,22 +85,22 @@ function TestsTestId() {
           disabled={
             getTestRes.testName.length === 0 ||
             getTestRes.length === 0 ||
-            Object.keys(storedProgress).length === 0
+            questionNumber === INIT_QUESTION_NUMBER
           }
         >
-          {storedProgress.isStartedOther
+          {isStartedOther
             ? "削除して開始"
-            : storedProgress.isResumed
+            : questionNumber > 1
             ? "再開"
             : "開始"}
         </Button>
       </Box>
-      {storedProgress.isStartedOther && (
+      {isStartedOther && (
         <Typography style={{ color: "red" }}>
           ※最後に回答した別テストの回答データを削除して開始します
         </Typography>
       )}
-      {storedProgress.isResumed && (
+      {questionNumber > 1 && (
         <Typography style={{ color: "red" }}>
           ※最後に回答した問題の直後から開始します
         </Typography>
