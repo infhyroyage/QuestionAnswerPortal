@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { Ref, forwardRef, useEffect } from "react";
+import { Ref, forwardRef, useEffect, useState } from "react";
 import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
 import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
@@ -20,14 +20,6 @@ import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useSetRecoilState } from "recoil";
 import { backdropImageSrcState } from "@/states/backdropImageSrc";
-
-const INIT_2ND_TRANSLATION: {
-  overall: string[];
-  incorrectChoices: { [choiceIdx: string]: string[] };
-} = {
-  overall: [],
-  incorrectChoices: {},
-};
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -48,6 +40,7 @@ function ExplanationsDialog({
   setSecondTranslation,
   translatedChoices,
 }: ExplanationsDialogProps) {
+  const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
   const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
@@ -112,7 +105,7 @@ function ExplanationsDialog({
             );
           setSecondTranslation({ overall, incorrectChoices });
         } catch (e) {
-          setSecondTranslation(undefined);
+          setIsShownSnackbar(true);
         }
       })();
   }, [
@@ -280,8 +273,8 @@ function ExplanationsDialog({
           )}
         </Stack>
         <NotTranslatedSnackbar
-          open={!secondTranslation}
-          onClose={() => setSecondTranslation(INIT_2ND_TRANSLATION)}
+          open={isShownSnackbar}
+          onClose={() => setIsShownSnackbar(false)}
         />
       </DialogContent>
     </Dialog>

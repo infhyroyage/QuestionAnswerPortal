@@ -19,14 +19,12 @@ export type ChoiceCardProps = {
   onClick?: () => void;
 };
 
-export type SecondTranslation =
-  | {
-      overall: string[];
-      incorrectChoices: {
-        [choiceIdx: string]: string[];
-      };
-    }
-  | undefined;
+export type SecondTranslation = {
+  overall: string[];
+  incorrectChoices: {
+    [choiceIdx: string]: string[];
+  };
+};
 export type ExplanationsDialogProps = {
   open: boolean;
   onClose: () => void;
