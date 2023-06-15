@@ -159,7 +159,7 @@ function TestsTestId() {
     if (questionNumber === getTestRes.length) {
       // 結果へ遷移
       setTopBarTitle(getTestRes.testName);
-      router.push(`/tests/${router.query.testId}/result`);
+      router.push(`/result`);
     } else {
       // 次問題へ遷移
       setTopBarTitle(

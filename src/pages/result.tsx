@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
 
-function TestsTestIdResult() {
+function Result() {
   const [progress, setProgress] = useState<Progress>({
     testId: "",
     testName: "",
@@ -129,4 +129,4 @@ function TestsTestIdResult() {
   );
 }
 
-export default TestsTestIdResult;
+export default Result;
