@@ -1,6 +1,7 @@
 import {
   Box,
   CircularProgress,
+  Divider,
   Fab,
   Skeleton,
   Stack,
@@ -149,7 +150,9 @@ function TestsTestIdQuestions() {
       router.push(`/tests/${router.query.testId}/result`);
     } else {
       // 次問題へ遷移
-      setTopBarTitle(`(${questionNumber + 1}/${getTestRes.length}) ${getTestRes.testName}`);
+      setTopBarTitle(
+        `(${questionNumber + 1}/${getTestRes.length}) ${getTestRes.testName}`
+      );
       setSecondTranslation(INIT_2ND_TRANSLATION);
       setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
       setSelectedIdxes([]);
@@ -384,6 +387,14 @@ function TestsTestIdQuestions() {
           </Fab>
         </span>
       </Tooltip>
+      <Divider
+        sx={{
+          width: "100%",
+          borderBottomWidth: "1px",
+          position: "absolute",
+          top: "60%",
+        }}
+      />
       <Box
         width="100%"
         height="40%"
