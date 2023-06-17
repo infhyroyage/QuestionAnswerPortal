@@ -70,3 +70,8 @@ export type TestReadyProps = {
   getTestRes: GetTest;
   setQuestionNumber: Dispatch<SetStateAction<number>>;
 };
+
+export type TestSubjectsProps = {
+  subjects: Sentence[];
+  translatedSubjects: string[];
+};

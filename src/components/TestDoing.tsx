@@ -10,17 +10,7 @@ import {
   SecondTranslation,
   TestDoingProps,
 } from "@/types/props";
-import {
-  Box,
-  CircularProgress,
-  Divider,
-  Fab,
-  Skeleton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import Image from "next/image";
+import { Box, CircularProgress, Divider, Fab, Tooltip } from "@mui/material";
 import LaunchIcon from "@mui/icons-material/Launch";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -32,12 +22,12 @@ import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import { backdropImageSrcState } from "@/states/backdropImageSrc";
 import { topBarTitleState } from "@/states/TopBarTitle";
 import { accessBackend } from "@/services/backend";
 import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
 import TestDoingSelector from "./TestDoingSelector";
+import TestSubjects from "./TestSubjects";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_QESTION_RES: GetQuestion = {
@@ -82,7 +72,6 @@ function TestDoing({
     useState<boolean>(false);
   const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
-  const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
 
   const router = useRouter();
 
@@ -234,51 +223,13 @@ function TestDoing({
         width="100%"
         height="60%"
         top={0}
-        p={2}
         position="absolute"
         style={{ overflowY: "auto" }}
       >
-        <Stack spacing={2}>
-          {getQuestionRes.subjects.length > 0 ? (
-            getQuestionRes.subjects.map((subject: Sentence, idx: number) =>
-              subject.isIndicatedImg ? (
-                <Image
-                  key={idx}
-                  src={subject.sentence}
-                  alt={`${idx + 1}th Picture`}
-                  width={160}
-                  height={120}
-                  onClick={() => setBackdropSrc(subject.sentence)}
-                />
-              ) : (
-                <span key={idx}>
-                  <Typography variant="body1" color="text.primary">
-                    {subject.sentence || <Skeleton />}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {firstTranslation.subjects.length > 0 ? (
-                      firstTranslation.subjects[idx]
-                    ) : (
-                      <Skeleton />
-                    )}
-                  </Typography>
-                </span>
-              )
-            )
-          ) : (
-            <>
-              <div>
-                <Typography variant="body1" color="text.primary">
-                  <Skeleton />
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  <Skeleton />
-                </Typography>
-              </div>
-              <Skeleton variant="rectangular" width={160} height={120} />
-            </>
-          )}
-        </Stack>
+        <TestSubjects
+          subjects={getQuestionRes.subjects}
+          translatedSubjects={firstTranslation.subjects}
+        />
       </Box>
       <Tooltip title="回答する" placement="top">
         <span
