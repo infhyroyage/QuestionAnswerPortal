@@ -67,8 +67,8 @@ function TopBar() {
             {topBarTitle}
           </Typography>
           <Stack direction="row" spacing={3}>
-            {topBarTitle === "Question Answer Portal" && <ThemeSwitch />}
-            {topBarTitle !== "Question Answer Portal" ? (
+            {router.pathname === "/" && <ThemeSwitch />}
+            {router.pathname !== "/" ? (
               <Tooltip title="タイトルへ">
                 <IconButton onClick={onClickBackspaceButton}>
                   <BackspaceIcon sx={{ color: "white" }} />
