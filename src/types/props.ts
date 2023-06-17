@@ -1,5 +1,5 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
-import { ExplanationSentences, Sentence } from "./backend";
+import { ExplanationSentences, GetTest, Sentence } from "./backend";
 
 export type ApplyMSALProps = {
   children: ReactNode;
@@ -39,4 +39,15 @@ export type ExplanationsDialogProps = {
 export type NotTranslatedSnackbarProps = {
   open: boolean;
   onClose: () => void;
+};
+
+export type TestDoingProps = {
+  getTestRes: GetTest;
+  questionNumber: number;
+  setQuestionNumber: Dispatch<SetStateAction<number>>;
+};
+
+export type TestReadyProps = {
+  getTestRes: GetTest;
+  setQuestionNumber: Dispatch<SetStateAction<number>>;
 };
