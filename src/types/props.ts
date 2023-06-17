@@ -1,5 +1,11 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
-import { ExplanationSentences, GetTest, Sentence } from "./backend";
+import {
+  ExplanationSentences,
+  GetQuestion,
+  GetQuestionAnswer,
+  GetTest,
+  Sentence,
+} from "./backend";
 
 export type ApplyMSALProps = {
   children: ReactNode;
@@ -45,6 +51,19 @@ export type TestDoingProps = {
   getTestRes: GetTest;
   questionNumber: number;
   setQuestionNumber: Dispatch<SetStateAction<number>>;
+};
+
+export type FirstTranslation = {
+  subjects: string[];
+  choices: string[];
+};
+export type TestDoingSelectorProps = {
+  getQuestionRes: GetQuestion;
+  getQuestionAnswerRes: GetQuestionAnswer;
+  firstTranslation: FirstTranslation;
+  selectedIdxes: number[];
+  setSelectedIdxes: Dispatch<SetStateAction<number[]>>;
+  isSubmitted: boolean;
 };
 
 export type TestReadyProps = {

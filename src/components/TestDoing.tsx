@@ -5,7 +5,11 @@ import {
   PutEn2JaRes,
   Sentence,
 } from "@/types/backend";
-import { SecondTranslation, TestDoingProps } from "@/types/props";
+import {
+  FirstTranslation,
+  SecondTranslation,
+  TestDoingProps,
+} from "@/types/props";
 import {
   Box,
   CircularProgress,
@@ -22,7 +26,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import ChoiceCard from "./ChoiceCard";
 import ExplanationsDialog from "./ExplanationsDialog";
 import BackdropImage from "./BackdropImage";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
@@ -34,6 +37,7 @@ import { topBarTitleState } from "@/states/TopBarTitle";
 import { accessBackend } from "@/services/backend";
 import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
+import TestDoingSelector from "./TestDoingSelector";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_QESTION_RES: GetQuestion = {
@@ -49,7 +53,7 @@ const INIT_GET_QESTION_ANSWER_RES: GetQuestionAnswer = {
   },
   references: [],
 };
-const INIT_1ST_TRANSLATION: { subjects: string[]; choices: string[] } = {
+const INIT_1ST_TRANSLATION: FirstTranslation = {
   subjects: [],
   choices: [],
 };
@@ -67,16 +71,16 @@ function TestDoing({
     useState<GetQuestion>(INIT_GET_QESTION_RES);
   const [getQuestionAnswerRes, setGetQuestionAnswerRes] =
     useState<GetQuestionAnswer>(INIT_GET_QESTION_ANSWER_RES);
+  const [firstTranslation, setFirstTranslation] =
+    useState<FirstTranslation>(INIT_1ST_TRANSLATION);
+  const [secondTranslation, setSecondTranslation] =
+    useState<SecondTranslation>(INIT_2ND_TRANSLATION);
   const [selectedIdxes, setSelectedIdxes] = useState<number[]>([]);
   const [isLoadingSubmitButton, setIsLoadingSubmitButton] =
     useState<boolean>(false);
-  const [firstTranslation, setFirstTranslation] = useState<
-    { subjects: string[]; choices: string[] } | undefined
-  >(INIT_1ST_TRANSLATION);
-  const [secondTranslation, setSecondTranslation] =
-    useState<SecondTranslation>(INIT_2ND_TRANSLATION);
   const [isOpenedExplanationsDialog, setIsOpenedExplanationsDialog] =
     useState<boolean>(false);
+  const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
   const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
 
@@ -84,25 +88,6 @@ function TestDoing({
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
-
-  const GenerateOnClickChoiceCard = (idx: number) => () => {
-    // 1つの問題に付き1回限りの回答とするため、回答済の場合はNOP
-    if (isLoadingSubmitButton || getQuestionAnswerRes.correctIdxes.length > 0)
-      return;
-
-    let updated: number[];
-    if (getQuestionRes.isCorrectedMulti) {
-      const updatedSelectedIdxes: number[] = selectedIdxes.includes(idx)
-        ? selectedIdxes.filter((selectedIdx: number) => selectedIdx !== idx)
-        : [...selectedIdxes, idx];
-      updated = updatedSelectedIdxes.sort((a, b) =>
-        a === b ? 0 : a < b ? -1 : 1
-      );
-    } else {
-      updated = [idx];
-    }
-    setSelectedIdxes(updated);
-  };
 
   const onClickSubmitButton = async () => {
     // 1つの問題に付き1回限りの回答とするため、2回目以降の回答ボタン押下はNOP
@@ -232,7 +217,7 @@ function TestDoing({
           );
           setFirstTranslation({ subjects, choices });
         } catch (e) {
-          setFirstTranslation(undefined);
+          setIsShownSnackbar(true);
         }
       })();
   }, [accountInfo, getQuestionRes, instance]);
@@ -271,8 +256,7 @@ function TestDoing({
                     {subject.sentence || <Skeleton />}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {firstTranslation &&
-                    firstTranslation.subjects.length > 0 ? (
+                    {firstTranslation.subjects.length > 0 ? (
                       firstTranslation.subjects[idx]
                     ) : (
                       <Skeleton />
@@ -391,52 +375,16 @@ function TestDoing({
           top: "60%",
         }}
       />
-      <Box
-        width="100%"
-        height="40%"
-        bottom={0}
-        p={2}
-        position="absolute"
-        style={{ overflowY: "auto" }}
-      >
-        <Stack spacing={2}>
-          {getQuestionRes.choices.length > 0 ? (
-            getQuestionRes.choices.map((choice: Sentence, idx: number) => (
-              <ChoiceCard
-                key={idx}
-                isSelected={selectedIdxes.includes(idx)}
-                isCorrect={
-                  getQuestionAnswerRes.correctIdxes.length > 0 &&
-                  selectedIdxes.includes(idx) &&
-                  getQuestionAnswerRes.correctIdxes.includes(idx)
-                }
-                isIncorrect={
-                  getQuestionAnswerRes.correctIdxes.length > 0 &&
-                  selectedIdxes.includes(idx) &&
-                  !getQuestionAnswerRes.correctIdxes.includes(idx)
-                }
-                isMissed={
-                  getQuestionAnswerRes.correctIdxes.length > 0 &&
-                  !selectedIdxes.includes(idx) &&
-                  getQuestionAnswerRes.correctIdxes.includes(idx)
-                }
-                choice={choice}
-                translatedText={
-                  firstTranslation && firstTranslation.choices.length > 0
-                    ? firstTranslation.choices[idx]
-                    : undefined
-                }
-                onClick={GenerateOnClickChoiceCard(idx)}
-              />
-            ))
-          ) : (
-            <>
-              <ChoiceCard />
-              <ChoiceCard />
-            </>
-          )}
-        </Stack>
-      </Box>
+      <TestDoingSelector
+        getQuestionRes={getQuestionRes}
+        getQuestionAnswerRes={getQuestionAnswerRes}
+        firstTranslation={firstTranslation}
+        selectedIdxes={selectedIdxes}
+        setSelectedIdxes={setSelectedIdxes}
+        isSubmitted={
+          isLoadingSubmitButton || getQuestionAnswerRes.correctIdxes.length > 0
+        }
+      />
       <ExplanationsDialog
         open={isOpenedExplanationsDialog}
         onClose={() => setIsOpenedExplanationsDialog(false)}
@@ -445,12 +393,12 @@ function TestDoing({
         references={getQuestionAnswerRes.references}
         secondTranslation={secondTranslation}
         setSecondTranslation={setSecondTranslation}
-        translatedChoices={firstTranslation && firstTranslation.choices}
+        translatedChoices={firstTranslation.choices}
       />
       <BackdropImage />
       <NotTranslatedSnackbar
-        open={!firstTranslation}
-        onClose={() => setFirstTranslation(INIT_1ST_TRANSLATION)}
+        open={isShownSnackbar}
+        onClose={() => setIsShownSnackbar(false)}
       />
     </Box>
   );
