@@ -267,17 +267,15 @@ function TestDoing({
             )
           ) : (
             <>
-              <Box pt={2}>
+              <div>
                 <Typography variant="body1" color="text.primary">
                   <Skeleton />
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   <Skeleton />
                 </Typography>
-              </Box>
-              <Box pt={2}>
-                <Skeleton variant="rectangular" width={160} height={120} />
-              </Box>
+              </div>
+              <Skeleton variant="rectangular" width={160} height={120} />
             </>
           )}
         </Stack>
