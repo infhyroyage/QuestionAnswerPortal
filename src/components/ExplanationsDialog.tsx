@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { Ref, forwardRef, useEffect, useState } from "react";
+import { Ref, forwardRef, memo, useEffect, useState } from "react";
 import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
 import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
@@ -281,4 +281,4 @@ function ExplanationsDialog({
   );
 }
 
-export default ExplanationsDialog;
+export default memo(ExplanationsDialog);

@@ -1,6 +1,7 @@
 import { backdropImageSrcState } from "@/states/backdropImageSrc";
 import { Backdrop } from "@mui/material";
 import Image from "next/image";
+import { memo } from "react";
 import { useRecoilState } from "recoil";
 
 function BackdropImage() {
@@ -26,4 +27,4 @@ function BackdropImage() {
   );
 }
 
-export default BackdropImage;
+export default memo(BackdropImage);

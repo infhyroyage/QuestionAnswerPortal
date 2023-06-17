@@ -1,5 +1,6 @@
 import { NotTranslatedSnackbarProps } from "@/types/props";
 import { Alert, Snackbar } from "@mui/material";
+import { memo } from "react";
 
 function NotTranslatedSnackbar({ open, onClose }: NotTranslatedSnackbarProps) {
   return (
@@ -15,4 +16,4 @@ function NotTranslatedSnackbar({ open, onClose }: NotTranslatedSnackbarProps) {
   );
 }
 
-export default NotTranslatedSnackbar;
+export default memo(NotTranslatedSnackbar);
