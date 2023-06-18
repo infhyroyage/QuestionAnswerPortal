@@ -1,3 +1,6 @@
+import BackdropImage from "@/components/BackdropImage";
+import NotTranslatedSnackbar from "@/components/NotTranslatedSnackbar";
+import TestResultTableRow from "@/components/TestResultTableRow";
 import { topBarTitleState } from "@/states/TopBarTitle";
 import { Answer, Progress } from "@/types/progress";
 import {
@@ -19,10 +22,10 @@ import { useSetRecoilState } from "recoil";
 function Result() {
   const [progress, setProgress] = useState<Progress>({
     testId: "",
-    testName: "",
     length: 0,
     answers: [],
   });
+  const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
 
   const router = useRouter();
@@ -38,10 +41,7 @@ function Result() {
   const correctLength: number = useMemo(() => {
     return progress.answers.length === 0
       ? -1
-      : progress.answers.filter(
-          (answer: Answer) =>
-            answer.choices.toString() === answer.correctChoices.toString()
-        ).length;
+      : progress.answers.filter((answer: Answer) => answer.isCorrect).length;
   }, [progress]);
 
   useEffect(() => {
@@ -60,9 +60,7 @@ function Result() {
         </Button>
       </Box>
       <Typography variant="h5" pb={2}>
-        {progress.testName.length > 0 &&
-        progress.length > 0 &&
-        correctLength > -1 ? (
+        {progress.length > 0 && correctLength > -1 ? (
           `全${progress.length}問中${correctLength}問正解`
         ) : (
           <Skeleton />
@@ -72,59 +70,33 @@ function Result() {
         <Table stickyHeader>
           <TableHead>
             <TableRow>
+              <TableCell />
               <TableCell>
                 <Typography variant="subtitle1">No.</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="subtitle1">選んだ選択肢</Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle1">正解の選択肢</Typography>
+                <Typography variant="subtitle1">結果</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {progress.answers.map((answer: Answer, idx: number) => (
-              <TableRow
+            {Array.from(Array(progress.length).keys()).map((idx: number) => (
+              <TestResultTableRow
                 key={idx}
-                sx={
-                  answer.choices.toString() === answer.correctChoices.toString()
-                    ? {}
-                    : { backgroundColor: "rgba(229, 115, 115, 0.3)" }
-                }
-              >
-                <TableCell>{idx + 1}</TableCell>
-                <TableCell>
-                  {answer.choices.length > 1 ? (
-                    <ul>
-                      {answer.choices.map(
-                        (choice: string, choiceIdx: number) => (
-                          <li key={choiceIdx}>{choice}</li>
-                        )
-                      )}
-                    </ul>
-                  ) : (
-                    answer.choices[0]
-                  )}
-                </TableCell>
-                <TableCell>
-                  {answer.correctChoices.length > 1 ? (
-                    <ul>
-                      {answer.correctChoices.map(
-                        (correctChoice: string, correctChoiceIdx: number) => (
-                          <li key={correctChoiceIdx}>{correctChoice}</li>
-                        )
-                      )}
-                    </ul>
-                  ) : (
-                    answer.correctChoices[0]
-                  )}
-                </TableCell>
-              </TableRow>
+                testId={progress.testId}
+                questionNumber={idx + 1}
+                answer={progress.answers[idx]}
+                setIsShownSnackbar={setIsShownSnackbar}
+              />
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <BackdropImage />
+      <NotTranslatedSnackbar
+        open={isShownSnackbar}
+        onClose={() => setIsShownSnackbar(false)}
+      />
     </Box>
   );
 }

@@ -93,31 +93,6 @@ function TestDoing({
       accountInfo
     );
 
-    // 回答結果をLocal Storageに一時保存
-    const choices: string[] = selectedIdxes.map(
-      (selectedIdx: number) => getQuestionRes.choices[selectedIdx].sentence
-    );
-    const correctChoices: string[] = res.correctIdxes.map(
-      (correctIdx: number) => getQuestionRes.choices[correctIdx].sentence
-    );
-    let updatedProgressState: Progress;
-    const progressStr: string | null = localStorage.getItem("progress");
-    if (!!progressStr) {
-      const progress: Progress = JSON.parse(progressStr);
-      updatedProgressState = {
-        ...progress,
-        answers: [...progress.answers, { choices, correctChoices }],
-      };
-    } else {
-      updatedProgressState = {
-        testId: `${router.query.testId}`,
-        testName: getTestRes.testName,
-        length: getTestRes.length,
-        answers: [{ choices, correctChoices }],
-      };
-    }
-    localStorage.setItem("progress", JSON.stringify(updatedProgressState));
-
     setGetQuestionAnswerRes(res);
     setIsLoadingSubmitButton(false);
   };
@@ -144,12 +119,32 @@ function TestDoing({
   /**
    * 正解した場合はtrue、未回答or不正解の場合はfalse
    */
-  const isCollect: boolean = useMemo(() => {
+  const isCorrect: boolean = useMemo(() => {
+    // 未回答の場合はNOP
     if (getQuestionAnswerRes.correctIdxes.length === 0) return false;
-    return (
-      selectedIdxes.toString() === getQuestionAnswerRes.correctIdxes.toString()
-    );
-  }, [getQuestionAnswerRes, selectedIdxes]);
+
+    // 回答済の場合、正解/不正解の結果を判定し、Local Storageに保存
+    const isCorrect: boolean =
+      selectedIdxes.toString() === getQuestionAnswerRes.correctIdxes.toString();
+    let updatedProgressState: Progress;
+    const progressStr: string | null = localStorage.getItem("progress");
+    if (!!progressStr) {
+      const progress: Progress = JSON.parse(progressStr);
+      updatedProgressState = {
+        ...progress,
+        answers: [...progress.answers, { selectedIdxes, isCorrect }],
+      };
+    } else {
+      updatedProgressState = {
+        testId: `${router.query.testId}`,
+        length: getTestRes.length,
+        answers: [{ selectedIdxes, isCorrect }],
+      };
+    }
+    localStorage.setItem("progress", JSON.stringify(updatedProgressState));
+
+    return isCorrect;
+  }, [getQuestionAnswerRes, getTestRes, router, selectedIdxes]);
 
   // テスト開始後、questionNumberの更新ごとに[GET] /tests/{testId}/questions/{questionNumber}を実行
   useEffect(() => {
@@ -243,7 +238,7 @@ function TestDoing({
             color={
               getQuestionAnswerRes.correctIdxes.length === 0
                 ? "info"
-                : isCollect
+                : isCorrect
                 ? "success"
                 : "error"
             }
@@ -253,7 +248,7 @@ function TestDoing({
           >
             {getQuestionAnswerRes.correctIdxes.length === 0 ? (
               <LaunchIcon />
-            ) : isCollect ? (
+            ) : isCorrect ? (
               <CheckIcon />
             ) : (
               <ClearIcon />

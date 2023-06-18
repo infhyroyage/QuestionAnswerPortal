@@ -1,10 +1,9 @@
 export type Answer = {
-  choices: string[];
-  correctChoices: string[];
+  selectedIdxes: number[];
+  isCorrect: boolean;
 };
 export type Progress = {
   testId: string;
-  testName: string;
   length: number;
   answers: Answer[];
 };

@@ -6,6 +6,7 @@ import {
   GetTest,
   Sentence,
 } from "./backend";
+import { Answer } from "./progress";
 
 export type ApplyMSALProps = {
   children: ReactNode;
@@ -69,6 +70,13 @@ export type TestDoingSelectorProps = {
 export type TestReadyProps = {
   getTestRes: GetTest;
   setQuestionNumber: Dispatch<SetStateAction<number>>;
+};
+
+export type TestResultTableRowProps = {
+  testId: string;
+  questionNumber: number;
+  answer: Answer;
+  setIsShownSnackbar: Dispatch<SetStateAction<boolean>>;
 };
 
 export type TestSubjectsProps = {
