@@ -22,7 +22,7 @@ import {
 } from "@/types/backend";
 import { accessBackend } from "@/services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
-import TestSubjects from "./TestSubjects";
+import TestSentences from "./TestSentences";
 import LoadingCenter from "./LoadingCenter";
 
 type Responses = Pick<
@@ -235,9 +235,9 @@ function TestResultTableRow({
                 <Typography variant="h6" pt={2}>
                   問題文
                 </Typography>
-                <TestSubjects
-                  subjects={responses.subjects}
-                  translatedSubjects={translation.subjects}
+                <TestSentences
+                  sentences={responses.subjects}
+                  translatedSentences={translation.subjects}
                 />
                 <Typography variant="h6">選んだ選択肢</Typography>
                 <Stack spacing={2} p={2}>
@@ -320,9 +320,9 @@ function TestResultTableRow({
                   )}
                 </Stack>
                 <Typography variant="h6">解説</Typography>
-                <TestSubjects
-                  subjects={responses.explanations.overall}
-                  translatedSubjects={translation.overall}
+                <TestSentences
+                  sentences={responses.explanations.overall}
+                  translatedSentences={translation.overall}
                 />
               </>
             ) : (

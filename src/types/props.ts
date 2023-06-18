@@ -79,7 +79,7 @@ export type TestResultTableRowProps = {
   setIsShownSnackbar: Dispatch<SetStateAction<boolean>>;
 };
 
-export type TestSubjectsProps = {
-  subjects: Sentence[];
-  translatedSubjects: string[];
+export type TestSentencesProps = {
+  sentences: Sentence[];
+  translatedSentences: string[];
 };

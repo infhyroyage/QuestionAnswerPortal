@@ -19,7 +19,7 @@ import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useSetRecoilState } from "recoil";
 import { backdropImageSrcState } from "@/states/backdropImageSrc";
-import TestSubjects from "./TestSubjects";
+import TestSentences from "./TestSentences";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -129,9 +129,9 @@ function ExplanationsDialog({
           {explanations.overall.length > 0 && (
             <div>
               <Typography variant="h6">解説</Typography>
-              <TestSubjects
-                subjects={explanations.overall}
-                translatedSubjects={secondTranslation.overall}
+              <TestSentences
+                sentences={explanations.overall}
+                translatedSentences={secondTranslation.overall}
               />
             </div>
           )}
@@ -176,9 +176,9 @@ function ExplanationsDialog({
                           </Typography>
                         </CardContent>
                       </Card>
-                      <TestSubjects
-                        subjects={explanations.incorrectChoices[choiceIdx]}
-                        translatedSubjects={
+                      <TestSentences
+                        sentences={explanations.incorrectChoices[choiceIdx]}
+                        translatedSentences={
                           choiceIdx in secondTranslation.incorrectChoices
                             ? secondTranslation.incorrectChoices[choiceIdx]
                             : []

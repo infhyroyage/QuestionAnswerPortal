@@ -1,18 +1,18 @@
 import { Sentence } from "@/types/backend";
-import { TestSubjectsProps } from "@/types/props";
+import { TestSentencesProps } from "@/types/props";
 import { Skeleton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { memo } from "react";
 import { backdropImageSrcState } from "@/states/backdropImageSrc";
 import { useSetRecoilState } from "recoil";
 
-function TestSubjects({ subjects, translatedSubjects }: TestSubjectsProps) {
+function TestSentences({ sentences, translatedSentences }: TestSentencesProps) {
   const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
 
   return (
     <Stack p={2} spacing={2}>
-      {subjects.length > 0 ? (
-        subjects.map((subject: Sentence, idx: number) =>
+      {sentences.length > 0 ? (
+        sentences.map((subject: Sentence, idx: number) =>
           subject.isIndicatedImg ? (
             <Image
               key={idx}
@@ -28,8 +28,8 @@ function TestSubjects({ subjects, translatedSubjects }: TestSubjectsProps) {
                 {subject.sentence || <Skeleton />}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {translatedSubjects.length > 0 ? (
-                  translatedSubjects[idx]
+                {translatedSentences.length > 0 ? (
+                  translatedSentences[idx]
                 ) : (
                   <Skeleton />
                 )}
@@ -54,4 +54,4 @@ function TestSubjects({ subjects, translatedSubjects }: TestSubjectsProps) {
   );
 }
 
-export default memo(TestSubjects);
+export default memo(TestSentences);

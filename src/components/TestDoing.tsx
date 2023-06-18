@@ -27,7 +27,7 @@ import { accessBackend } from "@/services/backend";
 import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
 import TestDoingSelector from "./TestDoingSelector";
-import TestSubjects from "./TestSubjects";
+import TestSentences from "./TestSentences";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_QESTION_RES: GetQuestion = {
@@ -221,9 +221,9 @@ function TestDoing({
         position="absolute"
         style={{ overflowY: "auto" }}
       >
-        <TestSubjects
-          subjects={getQuestionRes.subjects}
-          translatedSubjects={firstTranslation.subjects}
+        <TestSentences
+          sentences={getQuestionRes.subjects}
+          translatedSentences={firstTranslation.subjects}
         />
       </Box>
       <Tooltip title="回答する" placement="top">
