@@ -48,9 +48,9 @@ function ExplanationsDialog({
 
   // 解説ダイアログを開いた直後のみ解説文・不正解の選択肢の解説文を1度だけ翻訳
   useEffect(() => {
-    explanations.overall.length > 0 &&
-      open &&
+    open &&
       secondTranslation.overall.length === 0 &&
+      Object.keys(secondTranslation.incorrectChoices).length === 0 &&
       (async () => {
         // overall、incorrectChoices内のそれぞれの文字列に対して翻訳を複数回行わず、
         // overall、incorrectChoices内の順で配列を作成した文字列に対して翻訳を1回のみ行う
