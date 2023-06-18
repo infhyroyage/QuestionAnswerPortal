@@ -20,6 +20,7 @@ import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useSetRecoilState } from "recoil";
 import { backdropImageSrcState } from "@/states/backdropImageSrc";
 import TestSentences from "./TestSentences";
+import BackdropImage from "./BackdropImage";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -210,6 +211,7 @@ function ExplanationsDialog({
             </div>
           )}
         </Stack>
+        <BackdropImage />
         <NotTranslatedSnackbar
           open={isShownSnackbar}
           onClose={() => setIsShownSnackbar(false)}

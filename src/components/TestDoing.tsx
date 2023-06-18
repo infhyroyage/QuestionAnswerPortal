@@ -339,7 +339,7 @@ function TestDoing({
         setSecondTranslation={setSecondTranslation}
         translatedChoices={firstTranslation.choices}
       />
-      <BackdropImage />
+      {!isOpenedExplanationsDialog && <BackdropImage />}
       <NotTranslatedSnackbar
         open={isShownSnackbar}
         onClose={() => setIsShownSnackbar(false)}
