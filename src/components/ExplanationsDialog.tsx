@@ -14,12 +14,12 @@ import {
 import { TransitionProps } from "@mui/material/transitions";
 import { Ref, forwardRef, memo, useEffect, useState } from "react";
 import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
-import Image from "next/image";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useSetRecoilState } from "recoil";
 import { backdropImageSrcState } from "@/states/backdropImageSrc";
+import TestSubjects from "./TestSubjects";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -49,7 +49,6 @@ function ExplanationsDialog({
   useEffect(() => {
     explanations.overall.length > 0 &&
       open &&
-      secondTranslation &&
       secondTranslation.overall.length === 0 &&
       (async () => {
         // overall、incorrectChoices内のそれぞれの文字列に対して翻訳を複数回行わず、
@@ -129,38 +128,11 @@ function ExplanationsDialog({
         <Stack spacing={2} divider={<Divider />}>
           {explanations.overall.length > 0 && (
             <div>
-              <Typography variant="h6" pb={2}>
-                解説
-              </Typography>
-              <Stack spacing={2}>
-                {explanations.overall.map(
-                  (explanation: Sentence, idx: number) =>
-                    explanation.isIndicatedImg ? (
-                      <Image
-                        key={idx}
-                        src={explanation.sentence}
-                        alt={`${idx + 1}th Picture`}
-                        width={160}
-                        height={120}
-                        onClick={() => setBackdropSrc(explanation.sentence)}
-                      />
-                    ) : (
-                      <div key={idx}>
-                        <Typography variant="body1" color="text.primary">
-                          {explanation.sentence}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {secondTranslation &&
-                          secondTranslation.overall.length > 0 ? (
-                            secondTranslation.overall[idx]
-                          ) : (
-                            <Skeleton />
-                          )}
-                        </Typography>
-                      </div>
-                    )
-                )}
-              </Stack>
+              <Typography variant="h6">解説</Typography>
+              <TestSubjects
+                subjects={explanations.overall}
+                translatedSubjects={secondTranslation.overall}
+              />
             </div>
           )}
           {Object.keys(explanations.incorrectChoices).length > 0 && (
@@ -204,48 +176,14 @@ function ExplanationsDialog({
                           </Typography>
                         </CardContent>
                       </Card>
-                      <Stack pt={2} spacing={2}>
-                        {explanations.incorrectChoices[choiceIdx].map(
-                          (incorrectChoice: Sentence, idx: number) =>
-                            incorrectChoice.isIndicatedImg ? (
-                              <Image
-                                key={idx}
-                                src={incorrectChoice.sentence}
-                                alt={`${idx + 1}th Picture`}
-                                width={160}
-                                height={120}
-                                onClick={() =>
-                                  setBackdropSrc(incorrectChoice.sentence)
-                                }
-                              />
-                            ) : (
-                              <div key={idx}>
-                                <Typography
-                                  variant="body1"
-                                  color="text.primary"
-                                >
-                                  {incorrectChoice.sentence}
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {secondTranslation &&
-                                  choiceIdx in
-                                    secondTranslation.incorrectChoices &&
-                                  secondTranslation.incorrectChoices[choiceIdx]
-                                    .length > 0 ? (
-                                    secondTranslation.incorrectChoices[
-                                      choiceIdx
-                                    ][idx]
-                                  ) : (
-                                    <Skeleton />
-                                  )}
-                                </Typography>
-                              </div>
-                            )
-                        )}
-                      </Stack>
+                      <TestSubjects
+                        subjects={explanations.incorrectChoices[choiceIdx]}
+                        translatedSubjects={
+                          choiceIdx in secondTranslation.incorrectChoices
+                            ? secondTranslation.incorrectChoices[choiceIdx]
+                            : []
+                        }
+                      />
                     </div>
                   )
                 )}
