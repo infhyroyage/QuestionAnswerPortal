@@ -17,7 +17,7 @@ function TestDoingSelector({
     if (isSubmitted) return;
 
     let updated: number[];
-    if (getQuestionRes.isCorrectedMulti) {
+    if (getQuestionRes.isMultiplied) {
       const updatedSelectedIdxes: number[] = selectedIdxes.includes(idx)
         ? selectedIdxes.filter((selectedIdx: number) => selectedIdx !== idx)
         : [...selectedIdxes, idx];

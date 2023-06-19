@@ -33,7 +33,7 @@ const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_QESTION_RES: GetQuestion = {
   subjects: [],
   choices: [],
-  isCorrectedMulti: false,
+  isMultiplied: false,
 };
 const INIT_GET_QESTION_ANSWER_RES: GetQuestionAnswer = {
   correctIdxes: [],
