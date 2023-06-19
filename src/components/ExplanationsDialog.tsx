@@ -17,8 +17,6 @@ import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
-import { useSetRecoilState } from "recoil";
-import { backdropImageSrcState } from "@/services/atoms";
 import TestSentences from "./TestSentences";
 import BackdropImage from "./BackdropImage";
 
@@ -44,7 +42,6 @@ function ExplanationsDialog({
   const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
-  const setBackdropSrc = useSetRecoilState<string>(backdropImageSrcState);
 
   // 解説ダイアログを開いた直後のみ解説文・不正解の選択肢の解説文を1度だけ翻訳
   useEffect(() => {
