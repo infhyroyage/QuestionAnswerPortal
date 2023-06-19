@@ -22,35 +22,31 @@ const callByAxios = async <T, D>(
   accessToken?: string | undefined,
   data?: D
 ): Promise<T> => {
-  try {
-    let headers: AxiosHeaders | undefined = accessToken
-      ? new AxiosHeaders({
-          "X-Access-Token": accessToken,
-        })
-      : undefined;
+  let headers: AxiosHeaders | undefined = accessToken
+    ? new AxiosHeaders({
+        "X-Access-Token": accessToken,
+      })
+    : undefined;
 
-    // axios実行
-    let res;
-    switch (method) {
-      case "GET":
-        res = await axios.get<T>(url, { headers });
-        break;
-      case "PUT":
-        res = await axios.put<T, AxiosResponse<T, D>, D>(url, data, {
-          headers,
-        });
-        break;
-      default:
-        throw new Error(`Invalid method type: ${method}`);
-    }
-    if (res.status !== 200) {
-      throw new Error(res.statusText);
-    }
-
-    return res.data;
-  } catch (e) {
-    throw e;
+  // axios実行
+  let res;
+  switch (method) {
+    case "GET":
+      res = await axios.get<T>(url, { headers });
+      break;
+    case "PUT":
+      res = await axios.put<T, AxiosResponse<T, D>, D>(url, data, {
+        headers,
+      });
+      break;
+    default:
+      throw new Error(`Invalid method type: ${method}`);
   }
+  if (res.status !== 200) {
+    throw new Error(res.statusText);
+  }
+
+  return res.data;
 };
 
 /**
