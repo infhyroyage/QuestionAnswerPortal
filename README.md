@@ -4,7 +4,7 @@
 
 ## 概要
 
-[Microsoft ID Platform](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-overview)経由で認証認可を行ったもと、[QuestionAnswerTranslator](https://github.com/infhyroyage/QuestionAnswerTranslator)で構築した API サーバーのレスポンスから Web アプリケーションを構成する。
+[Microsoft ID Platform](https://learn.microsoft.com/ja-jp/azure/active-directory/develop/v2-overview)経由で認証認可を行ったもと、[QuestionAnswerTranslator](https://github.com/infhyroyage/QuestionAnswerTranslator)を API サーバーとする Web アプリケーションを構成する。
 
 ## 使用する主要なパッケージのバージョン
 
@@ -63,7 +63,7 @@ GitHub Pages を構築せず、localhost の 3000 番のポート上で Web サ�
 
 ## API サーバーの API リファレンス
 
-[Swagger UI](https://infhyroyage.github.io/QuestionAnswerSwagger/)参照。
+[Swagger UI](https://infhyroyage.github.io/QuestionAnswerTranslator/)参照。
 
 ## 完全初期化
 
