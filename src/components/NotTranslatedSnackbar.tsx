@@ -9,7 +9,12 @@ function NotTranslatedSnackbar({ open, onClose }: NotTranslatedSnackbarProps) {
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
       onClose={onClose}
     >
-      <Alert onClose={onClose} severity="error" sx={{ width: "100%" }}>
+      <Alert
+        variant="filled"
+        severity="warning"
+        onClose={onClose}
+        sx={{ width: "100%" }}
+      >
         翻訳できませんでした
       </Alert>
     </Snackbar>
