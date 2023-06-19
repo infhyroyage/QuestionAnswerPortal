@@ -1,5 +1,6 @@
 import ApplyMSAL from "@/components/ApplyMSAL";
 import ApplyMUI from "@/components/ApplyMUI";
+import SystemErrorSnackbar from "@/components/SystemErrorSnackbar";
 import TopBar from "@/components/TopBar";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -18,6 +19,7 @@ function App({ Component, pageProps }: AppProps) {
             <TopBar />
             <Component {...pageProps} />
           </ApplyMSAL>
+          <SystemErrorSnackbar />
         </ApplyMUI>
       </RecoilRoot>
     </>

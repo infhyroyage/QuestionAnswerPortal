@@ -10,6 +10,11 @@ export const isDarkModeState = atom<boolean>({
   default: false,
 });
 
+export const isShownSystemErrorSnackbarState = atom<boolean>({
+  key: "isShownSystemErrorSnackbar",
+  default: false,
+});
+
 export const topBarTitleState = atom<string>({
   key: "topBarTitle",
   default: "Question Answer Portal",
