@@ -1,7 +1,7 @@
 import BackdropImage from "@/components/BackdropImage";
 import NotTranslatedSnackbar from "@/components/NotTranslatedSnackbar";
 import TestResultTableRow from "@/components/TestResultTableRow";
-import { topBarTitleState } from "@/states/topBarTitle";
+import { topBarTitleState } from "@/services/atoms";
 import { Answer, Progress } from "@/types/progress";
 import {
   Box,

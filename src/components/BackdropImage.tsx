@@ -1,4 +1,4 @@
-import { backdropImageSrcState } from "@/states/backdropImageSrc";
+import { backdropImageSrcState } from "@/services/atoms";
 import { Backdrop } from "@mui/material";
 import Image from "next/image";
 import { memo } from "react";

@@ -18,7 +18,7 @@ import { useAccount, useMsal } from "@azure/msal-react";
 import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useSetRecoilState } from "recoil";
-import { backdropImageSrcState } from "@/states/backdropImageSrc";
+import { backdropImageSrcState } from "@/services/atoms";
 import TestSentences from "./TestSentences";
 import BackdropImage from "./BackdropImage";
 

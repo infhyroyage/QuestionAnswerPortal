@@ -1,4 +1,4 @@
-import { isDarkModeState } from "@/states/color";
+import { isDarkModeState } from "@/services/atoms";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { Switch, Tooltip } from "@mui/material";

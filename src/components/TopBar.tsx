@@ -14,7 +14,7 @@ import ThemeSwitch from "./ThemeSwitch";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { topBarTitleState } from "@/states/topBarTitle";
+import { topBarTitleState } from "@/services/atoms";
 import BackspaceIcon from "@mui/icons-material/Backspace";
 import { useRecoilState } from "recoil";
 

@@ -1,4 +1,4 @@
-import { topBarTitleState } from "@/states/topBarTitle";
+import { topBarTitleState } from "@/services/atoms";
 import { TestReadyProps } from "@/types/props";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
