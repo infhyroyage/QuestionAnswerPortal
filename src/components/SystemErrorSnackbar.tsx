@@ -22,7 +22,7 @@ function SystemErrorSnackbar() {
         onClose={onClose}
         sx={{ width: "100%" }}
       >
-        翻訳できませんでした
+        システムエラーが発生しました
       </Alert>
     </Snackbar>
   );
