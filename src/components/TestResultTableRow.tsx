@@ -24,6 +24,8 @@ import { accessBackend } from "@/services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
 import TestSentences from "./TestSentences";
 import LoadingCenter from "./LoadingCenter";
+import { useSetRecoilState } from "recoil";
+import { isShownSystemErrorSnackbarState } from "@/services/atoms";
 
 type Responses = Pick<
   GetQuestion & GetQuestionAnswer,
@@ -60,6 +62,9 @@ function TestResultTableRow({
   const [open, setOpen] = useState<boolean>(false);
   const [responses, setResponses] = useState<Responses>(INIT_RESPONSES);
   const [translation, setTranslation] = useState<Translation>(INIT_TRANSLATION);
+  const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
+    isShownSystemErrorSnackbarState
+  );
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
@@ -90,18 +95,32 @@ function TestResultTableRow({
             instance,
             accountInfo
           );
-        const [getQuestionRes, getQuestionAnswerRes] = await Promise.all<
-          [Promise<GetQuestion>, Promise<GetQuestionAnswer>]
-        >([getQuestionPromise, getQuestionAnswerPromise]);
-        setResponses({
-          subjects: getQuestionRes.subjects,
-          choices: getQuestionRes.choices,
-          correctIdxes: getQuestionAnswerRes.correctIdxes,
-          explanations: getQuestionAnswerRes.explanations,
-        });
+
+        try {
+          const [getQuestionRes, getQuestionAnswerRes] = await Promise.all<
+            [Promise<GetQuestion>, Promise<GetQuestionAnswer>]
+          >([getQuestionPromise, getQuestionAnswerPromise]);
+          setResponses({
+            subjects: getQuestionRes.subjects,
+            choices: getQuestionRes.choices,
+            correctIdxes: getQuestionAnswerRes.correctIdxes,
+            explanations: getQuestionAnswerRes.explanations,
+          });
+        } catch (e) {
+          console.error(e);
+          setIsShownSystemErrorSnackbar(true);
+        }
       })();
     }
-  }, [open, instance, accountInfo, testId, questionNumber, responses]);
+  }, [
+    open,
+    instance,
+    accountInfo,
+    testId,
+    questionNumber,
+    responses,
+    setIsShownSystemErrorSnackbar,
+  ]);
 
   // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ問題文・選択肢を翻訳
   useEffect(() => {

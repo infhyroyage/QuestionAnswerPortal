@@ -14,14 +14,20 @@ import ThemeSwitch from "./ThemeSwitch";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { topBarTitleState } from "@/services/atoms";
+import {
+  isShownSystemErrorSnackbarState,
+  topBarTitleState,
+} from "@/services/atoms";
 import BackspaceIcon from "@mui/icons-material/Backspace";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 function TopBar() {
   const [isShownProgress, setIsShownProgress] = useState<boolean>(false);
   const [topBarTitle, setTopBarTitle] =
     useRecoilState<string>(topBarTitleState);
+  const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
+    isShownSystemErrorSnackbarState
+  );
 
   const router = useRouter();
 
@@ -32,6 +38,7 @@ function TopBar() {
       await instance.logoutRedirect();
     } catch (e) {
       console.error(e);
+      setIsShownSystemErrorSnackbar(true);
     }
   };
 

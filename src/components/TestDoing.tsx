@@ -22,7 +22,10 @@ import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import { topBarTitleState } from "@/services/atoms";
+import {
+  isShownSystemErrorSnackbarState,
+  topBarTitleState,
+} from "@/services/atoms";
 import { accessBackend } from "@/services/backend";
 import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
@@ -72,6 +75,9 @@ function TestDoing({
     useState<boolean>(false);
   const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
+  const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
+    isShownSystemErrorSnackbarState
+  );
 
   const router = useRouter();
 
@@ -85,16 +91,22 @@ function TestDoing({
 
     setIsLoadingSubmitButton(true);
 
-    // [GET] /tests/{testId}/questions/{questionNumber}/answerを実行
-    const res: GetQuestionAnswer = await accessBackend<GetQuestionAnswer>(
-      "GET",
-      `/tests/${router.query.testId}/questions/${questionNumber}/answer`,
-      instance,
-      accountInfo
-    );
+    try {
+      // [GET] /tests/{testId}/questions/{questionNumber}/answerを実行
+      const res: GetQuestionAnswer = await accessBackend<GetQuestionAnswer>(
+        "GET",
+        `/tests/${router.query.testId}/questions/${questionNumber}/answer`,
+        instance,
+        accountInfo
+      );
 
-    setGetQuestionAnswerRes(res);
-    setIsLoadingSubmitButton(false);
+      setGetQuestionAnswerRes(res);
+    } catch (e) {
+      console.error(e);
+      setIsShownSystemErrorSnackbar(true);
+    } finally {
+      setIsLoadingSubmitButton(false);
+    }
   };
 
   const onClickNextQuestionButton = async () => {

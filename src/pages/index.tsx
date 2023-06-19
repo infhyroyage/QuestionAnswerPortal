@@ -14,12 +14,18 @@ import { useAccount, useMsal } from "@azure/msal-react";
 import { Skeleton } from "@mui/material";
 import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import { topBarTitleState } from "@/services/atoms";
+import {
+  isShownSystemErrorSnackbarState,
+  topBarTitleState,
+} from "@/services/atoms";
 
 function Home() {
   const [opens, setOpens] = useState<boolean[]>([]);
   const [getTestsRes, setGetTestsRes] = useState<GetTests>({});
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
+  const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
+    isShownSystemErrorSnackbarState
+  );
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
@@ -40,17 +46,22 @@ function Home() {
   // クライアントサイドでの初回レンダリング時のみ[GET] /testsを実行
   useEffect(() => {
     (async () => {
-      const res: GetTests = await accessBackend<GetTests>(
-        "GET",
-        "/tests",
-        instance,
-        accountInfo
-      );
+      try {
+        const res: GetTests = await accessBackend<GetTests>(
+          "GET",
+          "/tests",
+          instance,
+          accountInfo
+        );
 
-      setOpens(new Array(Object.keys(res).length).fill(false));
-      setGetTestsRes(res);
+        setOpens(new Array(Object.keys(res).length).fill(false));
+        setGetTestsRes(res);
+      } catch (e) {
+        console.error(e);
+        setIsShownSystemErrorSnackbar(true);
+      }
     })();
-  }, [accountInfo, instance]);
+  }, [accountInfo, instance, setIsShownSystemErrorSnackbar]);
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }} component="nav">
