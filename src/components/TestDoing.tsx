@@ -22,7 +22,7 @@ import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import { topBarTitleState } from "@/states/TopBarTitle";
+import { topBarTitleState } from "@/states/topBarTitle";
 import { accessBackend } from "@/services/backend";
 import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";

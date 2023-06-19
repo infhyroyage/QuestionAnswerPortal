@@ -14,7 +14,7 @@ import { useAccount, useMsal } from "@azure/msal-react";
 import { Skeleton } from "@mui/material";
 import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import { topBarTitleState } from "@/states/TopBarTitle";
+import { topBarTitleState } from "@/states/topBarTitle";
 
 function Home() {
   const [opens, setOpens] = useState<boolean[]>([]);
