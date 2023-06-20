@@ -18,10 +18,12 @@ import {
   isShownSystemErrorSnackbarState,
   topBarTitleState,
 } from "@/services/atoms";
+import RestoreIcon from "@mui/icons-material/Restore";
 
 function Home() {
   const [opens, setOpens] = useState<boolean[]>([]);
   const [getTestsRes, setGetTestsRes] = useState<GetTests>({});
+  const [storedTestId, setStoredTestId] = useState<string>("");
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
   const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
     isShownSystemErrorSnackbarState
@@ -42,6 +44,15 @@ function Home() {
     setTopBarTitle(test.testName);
     router.push(`/tests/${test.id}`);
   };
+
+  useEffect(() => {
+    const progressStr: string | null = localStorage.getItem("progress");
+    setStoredTestId(
+      !!progressStr && typeof JSON.parse(progressStr).testId === "string"
+        ? JSON.parse(progressStr).testId
+        : ""
+    );
+  }, []);
 
   // クライアントサイドでの初回レンダリング時のみ[GET] /testsを実行
   useEffect(() => {
@@ -87,13 +98,14 @@ function Home() {
                 {getTestsRes[course].map((test: Test) => (
                   <ListItemButton
                     key={test.id}
-                    sx={{ pl: 4 }}
+                    sx={{ ml: 4 }}
                     onClick={() => handleClickInnerListItemButton(test)}
                   >
                     <ListItemIcon>
                       <ArticleIcon />
                     </ListItemIcon>
                     <ListItemText primary={test.testName} />
+                    {test.id === storedTestId && <RestoreIcon sx={{ mr: 4 }} />}
                   </ListItemButton>
                 ))}
               </List>
