@@ -1,14 +1,11 @@
-import { topBarTitleState } from "@/services/atoms";
 import { TestReadyProps } from "@/types/props";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
 
 function TestReady({ getTestRes, setQuestionNumber }: TestReadyProps) {
   const [isSavedOtherTest, setIsSavedOtherTest] = useState<boolean>(false);
   const [isSavedSameTest, setIsSavedSameTest] = useState<boolean>(false);
-  const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
 
   const router = useRouter();
 
@@ -20,9 +17,6 @@ function TestReady({ getTestRes, setQuestionNumber }: TestReadyProps) {
     const startQuestionNumber = !!progressStr
       ? JSON.parse(progressStr).answers.length + 1
       : 1;
-    setTopBarTitle(
-      `(${startQuestionNumber}/${getTestRes.length}) ${getTestRes.testName}`
-    );
     setQuestionNumber(startQuestionNumber);
   };
 

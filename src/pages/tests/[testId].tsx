@@ -6,7 +6,10 @@ import { accessBackend } from "@/services/backend";
 import TestReady from "@/components/TestReady";
 import TestDoing from "@/components/TestDoing";
 import { useSetRecoilState } from "recoil";
-import { isShownSystemErrorSnackbarState } from "@/services/atoms";
+import {
+  isShownSystemErrorSnackbarState,
+  topBarTitleState,
+} from "@/services/atoms";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -18,6 +21,7 @@ function TestsTestId() {
   const [questionNumber, setQuestionNumber] =
     useState<number>(INIT_QUESTION_NUMBER);
   const [getTestRes, setGetTestRes] = useState<GetTest>(INIT_GET_TEST_RES);
+  const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
   const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
     isShownSystemErrorSnackbarState
   );
@@ -47,6 +51,16 @@ function TestsTestId() {
       })();
     }
   }, [accountInfo, instance, router, setIsShownSystemErrorSnackbar]);
+
+  useEffect(() => {
+    if (getTestRes.testName !== "") {
+      setTopBarTitle(
+        questionNumber === INIT_QUESTION_NUMBER
+          ? getTestRes.testName
+          : `(${questionNumber}/${getTestRes.length}) ${getTestRes.testName}`
+      );
+    }
+  }, [getTestRes, questionNumber, setTopBarTitle]);
 
   return questionNumber === INIT_QUESTION_NUMBER ? (
     <TestReady getTestRes={getTestRes} setQuestionNumber={setQuestionNumber} />

@@ -40,10 +40,9 @@ function Home() {
     setOpens(updatedOpens);
   };
 
-  const handleClickInnerListItemButton = (test: Test) => {
-    setTopBarTitle(test.testName);
-    router.push(`/tests/${test.id}`);
-  };
+  useEffect(() => {
+    setTopBarTitle("Question Answer Portal");
+  }, [setTopBarTitle]);
 
   useEffect(() => {
     const progressStr: string | null = localStorage.getItem("progress");
@@ -99,7 +98,7 @@ function Home() {
                   <ListItemButton
                     key={test.id}
                     sx={{ ml: 4 }}
-                    onClick={() => handleClickInnerListItemButton(test)}
+                    onClick={() => router.push(`/tests/${test.id}`)}
                   >
                     <ListItemIcon>
                       <ArticleIcon />

@@ -22,10 +22,7 @@ import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import {
-  isShownSystemErrorSnackbarState,
-  topBarTitleState,
-} from "@/services/atoms";
+import { isShownSystemErrorSnackbarState } from "@/services/atoms";
 import { accessBackend } from "@/services/backend";
 import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
@@ -74,7 +71,6 @@ function TestDoing({
   const [isOpenedExplanationsDialog, setIsOpenedExplanationsDialog] =
     useState<boolean>(false);
   const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
-  const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
   const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
     isShownSystemErrorSnackbarState
   );
@@ -112,13 +108,9 @@ function TestDoing({
   const onClickNextQuestionButton = async () => {
     if (questionNumber === getTestRes.length) {
       // 結果へ遷移
-      setTopBarTitle(getTestRes.testName);
       router.push(`/result`);
     } else {
       // 次問題へ遷移
-      setTopBarTitle(
-        `(${questionNumber + 1}/${getTestRes.length}) ${getTestRes.testName}`
-      );
       setSecondTranslation(INIT_2ND_TRANSLATION);
       setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
       setSelectedIdxes([]);
