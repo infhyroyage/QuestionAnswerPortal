@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogContent,
   Divider,
+  IconButton,
   Link,
   Skeleton,
   Slide,
@@ -19,6 +20,7 @@ import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import TestSentences from "./TestSentences";
 import BackdropImage from "./BackdropImage";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -40,6 +42,7 @@ function ExplanationsDialog({
   translatedChoices,
 }: ExplanationsDialogProps) {
   const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
+
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
 
@@ -122,6 +125,17 @@ function ExplanationsDialog({
       onClose={onClose}
       sx={{ zIndex: (theme) => theme.zIndex.tooltip + 1 }}
     >
+      <IconButton
+        onClick={onClose}
+        size="medium"
+        sx={{
+          position: "absolute",
+          top: (theme) => theme.spacing(1),
+          right: (theme) => theme.spacing(1),
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
       <DialogContent dividers>
         <Stack spacing={2} divider={<Divider />}>
           {explanations.overall.length > 0 && (
