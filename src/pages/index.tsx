@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { GetTests, Test } from "@/types/backend";
 import { accessBackend } from "@/services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
-import { Skeleton } from "@mui/material";
+import { Divider, Skeleton } from "@mui/material";
 import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
 import {
@@ -74,7 +74,7 @@ function Home() {
   }, [accountInfo, instance, setIsShownSystemErrorSnackbar]);
 
   return (
-    <List sx={{ width: "100%", bgcolor: "background.paper" }} component="nav">
+    <List sx={{ width: "100%", bgcolor: "background.paper" }}>
       {Object.keys(getTestsRes).length > 0 ? (
         Object.keys(getTestsRes).map((course: string, i: number) => (
           <React.Fragment key={course}>
@@ -112,7 +112,12 @@ function Home() {
           </React.Fragment>
         ))
       ) : (
-        <Skeleton variant="rectangular" width="100%" height="60px" />
+        <>
+          <Skeleton variant="rectangular" width="100%" height="59.2px" />
+          <Divider light sx={{ borderBottomWidth: "0.8px" }} />
+          <Skeleton variant="rectangular" width="100%" height="59.2px" />
+          <Divider light sx={{ borderBottomWidth: "0.8px" }} />
+        </>
       )}
     </List>
   );
