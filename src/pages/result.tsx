@@ -59,13 +59,12 @@ function Result() {
 
   // クライアントサイドでの初回レンダリング時のみ[GET] /tests/{testId}を実行
   useEffect(() => {
-    if (router.isReady) {
-      const { testId } = router.query;
+    if (progress.testId !== "") {
       (async () => {
         try {
           const res: GetTest = await accessBackend<GetTest>(
             "GET",
-            `/tests/${testId}`,
+            `/tests/${progress.testId}`,
             instance,
             accountInfo
           );
@@ -76,7 +75,7 @@ function Result() {
         }
       })();
     }
-  }, [accountInfo, instance, router, setIsShownSystemErrorSnackbar]);
+  }, [progress, accountInfo, instance, setIsShownSystemErrorSnackbar]);
 
   useEffect(() => {
     if (getTestRes.testName !== "") {
