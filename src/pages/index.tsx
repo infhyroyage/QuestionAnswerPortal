@@ -97,14 +97,17 @@ function Home() {
                 {getTestsRes[course].map((test: Test) => (
                   <ListItemButton
                     key={test.id}
-                    sx={{ ml: 4 }}
                     onClick={() => router.push(`/tests/${test.id}`)}
                   >
-                    <ListItemIcon>
+                    <ListItemIcon sx={{ ml: 2 }}>
                       <ArticleIcon />
                     </ListItemIcon>
                     <ListItemText primary={test.testName} />
-                    {test.id === storedTestId && <RestoreIcon sx={{ mr: 4 }} />}
+                    {test.id === storedTestId && (
+                      <ListItemIcon>
+                        <RestoreIcon />
+                      </ListItemIcon>
+                    )}
                   </ListItemButton>
                 ))}
               </List>
