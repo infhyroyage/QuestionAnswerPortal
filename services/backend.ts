@@ -6,7 +6,7 @@ import {
 } from "@azure/msal-browser";
 import axios, { AxiosHeaders, AxiosResponse } from "axios";
 import { backendAccessScopes } from "./msal";
-import { Method } from "@/types/backend";
+import { Method } from "../types/backend";
 
 /**
  * axiosを用いて、バックエンドのREST APIにアクセスしたレスポンスをそのまま返す

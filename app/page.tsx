@@ -1,3 +1,5 @@
+"use client";
+
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -8,23 +10,27 @@ import ArticleIcon from "@mui/icons-material/Article";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import React, { useEffect, useState } from "react";
-import { GetTests, Test } from "@/types/backend";
-import { accessBackend } from "@/services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { Divider, Skeleton } from "@mui/material";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useSetRecoilState } from "recoil";
+import RestoreIcon from "@mui/icons-material/Restore";
+import { GetTests, Test } from "../types/backend";
 import {
   isShownSystemErrorSnackbarState,
+  isShownTopProgressState,
   topBarTitleState,
-} from "@/services/atoms";
-import RestoreIcon from "@mui/icons-material/Restore";
+} from "../services/atoms";
+import { accessBackend } from "../services/backend";
 
 function Home() {
   const [opens, setOpens] = useState<boolean[]>([]);
   const [getTestsRes, setGetTestsRes] = useState<GetTests>({});
   const [storedTestId, setStoredTestId] = useState<string>("");
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
+  const setIsShownTopProgress = useSetRecoilState<boolean>(
+    isShownTopProgressState
+  );
   const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
     isShownSystemErrorSnackbarState
   );
@@ -38,6 +44,11 @@ function Home() {
     const updatedOpens = [...opens];
     updatedOpens[i] = !updatedOpens[i];
     setOpens(updatedOpens);
+  };
+
+  const handleClickInnerListItemButton = (testId: string) => {
+    setIsShownTopProgress(true);
+    router.push(`/tests/${testId}`);
   };
 
   useEffect(() => {
@@ -97,7 +108,7 @@ function Home() {
                 {getTestsRes[course].map((test: Test) => (
                   <ListItemButton
                     key={test.id}
-                    onClick={() => router.push(`/tests/${test.id}`)}
+                    onClick={() => handleClickInnerListItemButton(test.id)}
                   >
                     <ListItemIcon sx={{ ml: 2 }}>
                       <ArticleIcon />

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AppBar,
   Box,
@@ -11,25 +13,29 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useMsal } from "@azure/msal-react";
 import ThemeSwitch from "./ThemeSwitch";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Head from "next/head";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import {
   isShownSystemErrorSnackbarState,
+  isShownTopProgressState,
   topBarTitleState,
-} from "@/services/atoms";
+} from "../services/atoms";
 import BackspaceIcon from "@mui/icons-material/Backspace";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
 function TopBar() {
-  const [isShownProgress, setIsShownProgress] = useState<boolean>(false);
   const [topBarTitle, setTopBarTitle] =
     useRecoilState<string>(topBarTitleState);
+  const [isShownTopProgress, setIsShownTopProgress] = useRecoilState<boolean>(
+    isShownTopProgressState
+  );
   const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
     isShownSystemErrorSnackbarState
   );
 
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { instance } = useMsal();
 
@@ -43,39 +49,28 @@ function TopBar() {
   };
 
   const onClickBackspaceButton = () => {
+    setIsShownTopProgress(true);
     setTopBarTitle("Question Answer Portal");
     router.push("/");
   };
 
-  const handleRouteChangeShow = () => setIsShownProgress(true);
-  const handleRouteChangeHide = () => setIsShownProgress(false);
-
+  // Next.js v12までのrouter.eventsに相当する機能は、
+  // v13にて、pathname、searchParamsに依存するuseEffectで実装可能
+  // https://nextjs.org/docs/app/api-reference/functions/use-router#router-events
   useEffect(() => {
-    router.events.on("routeChangeStart", handleRouteChangeShow);
-    router.events.on("routeChangeComplete", handleRouteChangeHide);
-    router.events.on("routeChangeError", handleRouteChangeHide);
-
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChangeShow);
-      router.events.off("routeChangeComplete", handleRouteChangeHide);
-      router.events.off("routeChangeError", handleRouteChangeHide);
-    };
-  }, [router]);
+    setIsShownTopProgress(false);
+  }, [pathname, searchParams, setIsShownTopProgress]);
 
   return (
     <>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Question Answer Portal</title>
-      </Head>
       <AppBar position="sticky" sx={{ height: "64px" }}>
         <Toolbar sx={{ height: "100%" }}>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             {topBarTitle}
           </Typography>
           <Stack direction="row" spacing={3}>
-            {router.pathname === "/" && <ThemeSwitch />}
-            {router.pathname !== "/" ? (
+            {pathname === "/" && <ThemeSwitch />}
+            {pathname !== "/" ? (
               <Tooltip title="タイトルへ">
                 <IconButton onClick={onClickBackspaceButton}>
                   <BackspaceIcon sx={{ color: "white" }} />
@@ -93,7 +88,7 @@ function TopBar() {
           </Stack>
         </Toolbar>
       </AppBar>
-      {isShownProgress ? (
+      {isShownTopProgress ? (
         <LinearProgress />
       ) : (
         <Box

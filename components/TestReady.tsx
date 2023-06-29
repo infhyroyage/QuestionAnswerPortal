@@ -1,13 +1,12 @@
-import { TestReadyProps } from "@/types/props";
+"use client";
+
+import { TestReadyProps } from "../types/props";
 import { Box, Button, Typography } from "@mui/material";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-function TestReady({ getTestRes, setQuestionNumber }: TestReadyProps) {
+function TestReady({ getTestRes, setQuestionNumber, testId }: TestReadyProps) {
   const [isSavedOtherTest, setIsSavedOtherTest] = useState<boolean>(false);
   const [isSavedSameTest, setIsSavedSameTest] = useState<boolean>(false);
-
-  const router = useRouter();
 
   const onClickStartButton = () => {
     // 別テストの回答データをlocalstorageから削除
@@ -21,18 +20,16 @@ function TestReady({ getTestRes, setQuestionNumber }: TestReadyProps) {
   };
 
   useEffect(() => {
-    if (router.isReady) {
-      const progressStr: string | null = localStorage.getItem("progress");
-      setIsSavedOtherTest(
-        !!progressStr && JSON.parse(progressStr).testId !== router.query.testId
-      );
-      setIsSavedSameTest(
-        !!progressStr &&
-          JSON.parse(progressStr).testId === router.query.testId &&
-          JSON.parse(progressStr).answers.length > 0
-      );
-    }
-  }, [router]);
+    const progressStr: string | null = localStorage.getItem("progress");
+    setIsSavedOtherTest(
+      !!progressStr && JSON.parse(progressStr).testId !== testId
+    );
+    setIsSavedSameTest(
+      !!progressStr &&
+        JSON.parse(progressStr).testId === testId &&
+        JSON.parse(progressStr).answers.length > 0
+    );
+  }, [testId]);
 
   return (
     <Box p={2}>

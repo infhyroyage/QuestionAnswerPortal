@@ -1,8 +1,10 @@
-import { ApplyMSALProps } from "@/types/props";
+"use client";
+
+import { ApplyMSALProps } from "../types/props";
 import LoadingCenter from "./LoadingCenter";
 import { MsalAuthenticationTemplate, MsalProvider } from "@azure/msal-react";
 import { InteractionType, PublicClientApplication } from "@azure/msal-browser";
-import { config, loginScope } from "@/services/msal";
+import { config, loginScope } from "../services/msal";
 
 function ApplyMSAL({ children }: ApplyMSALProps) {
   const msalInstance = new PublicClientApplication(config);

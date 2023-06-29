@@ -15,6 +15,11 @@ export const isShownSystemErrorSnackbarState = atom<boolean>({
   default: false,
 });
 
+export const isShownTopProgressState = atom<boolean>({
+  key: "isShownTopProgressState",
+  default: true,
+});
+
 export const topBarTitleState = atom<string>({
   key: "topBarTitle",
   default: "Question Answer Portal",

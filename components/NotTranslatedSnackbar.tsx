@@ -1,4 +1,6 @@
-import { NotTranslatedSnackbarProps } from "@/types/props";
+"use client";
+
+import { NotTranslatedSnackbarProps } from "../types/props";
 import { Alert, Snackbar } from "@mui/material";
 import { memo } from "react";
 

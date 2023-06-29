@@ -1,15 +1,17 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useAccount, useMsal } from "@azure/msal-react";
-import { GetTest } from "@/types/backend";
-import { accessBackend } from "@/services/backend";
-import TestReady from "@/components/TestReady";
-import TestDoing from "@/components/TestDoing";
+import { GetTest } from "../../../types/backend";
+import { accessBackend } from "../../../services/backend";
+import TestReady from "../../../components/TestReady";
+import TestDoing from "../../../components/TestDoing";
 import { useSetRecoilState } from "recoil";
 import {
   isShownSystemErrorSnackbarState,
   topBarTitleState,
-} from "@/services/atoms";
+} from "../../../services/atoms";
+import { TestsTestIdProps } from "../../../types/props";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -17,7 +19,7 @@ const INIT_GET_TEST_RES: GetTest = {
   length: 0,
 };
 
-function TestsTestId() {
+function TestsTestId({ params }: TestsTestIdProps) {
   const [questionNumber, setQuestionNumber] =
     useState<number>(INIT_QUESTION_NUMBER);
   const [getTestRes, setGetTestRes] = useState<GetTest>(INIT_GET_TEST_RES);
@@ -26,31 +28,27 @@ function TestsTestId() {
     isShownSystemErrorSnackbarState
   );
 
-  const router = useRouter();
-
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
 
   // クライアントサイドでの初回レンダリング時のみ[GET] /tests/{testId}を実行
   useEffect(() => {
-    if (router.isReady) {
-      const { testId } = router.query;
-      (async () => {
-        try {
-          const res: GetTest = await accessBackend<GetTest>(
-            "GET",
-            `/tests/${testId}`,
-            instance,
-            accountInfo
-          );
-          setGetTestRes(res);
-        } catch (e) {
-          console.error(e);
-          setIsShownSystemErrorSnackbar(true);
-        }
-      })();
-    }
-  }, [accountInfo, instance, router, setIsShownSystemErrorSnackbar]);
+    const { testId } = params;
+    (async () => {
+      try {
+        const res: GetTest = await accessBackend<GetTest>(
+          "GET",
+          `/tests/${testId}`,
+          instance,
+          accountInfo
+        );
+        setGetTestRes(res);
+      } catch (e) {
+        console.error(e);
+        setIsShownSystemErrorSnackbar(true);
+      }
+    })();
+  }, [accountInfo, instance, params, setIsShownSystemErrorSnackbar]);
 
   useEffect(() => {
     if (getTestRes.testName !== "") {
@@ -63,12 +61,17 @@ function TestsTestId() {
   }, [getTestRes, questionNumber, setTopBarTitle]);
 
   return questionNumber === INIT_QUESTION_NUMBER ? (
-    <TestReady getTestRes={getTestRes} setQuestionNumber={setQuestionNumber} />
+    <TestReady
+      getTestRes={getTestRes}
+      setQuestionNumber={setQuestionNumber}
+      testId={params.testId}
+    />
   ) : (
     <TestDoing
       getTestRes={getTestRes}
       questionNumber={questionNumber}
       setQuestionNumber={setQuestionNumber}
+      testId={params.testId}
     />
   );
 }

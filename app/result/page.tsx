@@ -1,13 +1,16 @@
-import BackdropImage from "@/components/BackdropImage";
-import NotTranslatedSnackbar from "@/components/NotTranslatedSnackbar";
-import TestResultTableRow from "@/components/TestResultTableRow";
+"use client";
+
+import BackdropImage from "../../components/BackdropImage";
+import NotTranslatedSnackbar from "../../components/NotTranslatedSnackbar";
+import TestResultTableRow from "../../components/TestResultTableRow";
 import {
   isShownSystemErrorSnackbarState,
+  isShownTopProgressState,
   topBarTitleState,
-} from "@/services/atoms";
-import { accessBackend } from "@/services/backend";
-import { GetTest } from "@/types/backend";
-import { Answer, Progress } from "@/types/progress";
+} from "../../services/atoms";
+import { accessBackend } from "../../services/backend";
+import { GetTest } from "../../types/backend";
+import { Answer, Progress } from "../../types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
 import {
   Box,
@@ -21,7 +24,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
 
@@ -39,6 +42,9 @@ function Result() {
   });
   const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const setTopBarTitle = useSetRecoilState<string>(topBarTitleState);
+  const setIsShownTopProgress = useSetRecoilState<boolean>(
+    isShownTopProgressState
+  );
   const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
     isShownSystemErrorSnackbarState
   );
@@ -47,6 +53,11 @@ function Result() {
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
+
+  const onClickButton = () => {
+    setIsShownTopProgress(true);
+    router.push("/");
+  };
 
   /**
    * 正解した問題数(初期値:-1)
@@ -94,7 +105,7 @@ function Result() {
   return (
     <Box p={2}>
       <Box display="flex" justifyContent="center" alignItems="center" pb={1}>
-        <Button variant="contained" onClick={() => router.push("/")}>
+        <Button variant="contained" onClick={() => onClickButton()}>
           タイトルへ
         </Button>
       </Box>

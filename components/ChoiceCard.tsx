@@ -1,4 +1,6 @@
-import { ChoiceCardProps } from "@/types/props";
+"use client";
+
+import { ChoiceCardProps } from "../types/props";
 import {
   Card,
   CardActionArea,
