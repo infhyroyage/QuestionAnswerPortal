@@ -12,6 +12,7 @@ module.exports = withInterceptStdout(
     images: {
       unoptimized: true,
     },
+    output: "export",
     reactStrictMode: false,
   },
   (text) => (text.includes("Duplicate atom key") ? "" : text)
