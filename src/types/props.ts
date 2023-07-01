@@ -48,15 +48,10 @@ export type NotTranslatedSnackbarProps = {
   onClose: () => void;
 };
 
-export type RootLayoutProps = {
-  children: ReactNode;
-};
-
 export type TestDoingProps = {
   getTestRes: GetTest;
   questionNumber: number;
   setQuestionNumber: Dispatch<SetStateAction<number>>;
-  testId: string;
 };
 
 export type FirstTranslation = {
@@ -75,7 +70,6 @@ export type TestDoingSelectorProps = {
 export type TestReadyProps = {
   getTestRes: GetTest;
   setQuestionNumber: Dispatch<SetStateAction<number>>;
-  testId: string;
 };
 
 export type TestResultTableRowProps = {
@@ -88,8 +82,4 @@ export type TestResultTableRowProps = {
 export type TestSentencesProps = {
   sentences: Sentence[];
   translatedSentences: string[];
-};
-
-export type TestsTestIdProps = {
-  params: { testId: string };
 };

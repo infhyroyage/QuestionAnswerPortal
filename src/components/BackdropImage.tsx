@@ -1,6 +1,4 @@
-"use client";
-
-import { backdropImageSrcState } from "../services/atoms";
+import { backdropImageSrcState } from "@/services/atoms";
 import { Backdrop } from "@mui/material";
 import Image from "next/image";
 import { memo } from "react";

@@ -1,6 +1,4 @@
-"use client";
-
-import { ExplanationsDialogProps } from "../types/props";
+import { ExplanationsDialogProps } from "@/types/props";
 import {
   Card,
   CardContent,
@@ -16,9 +14,9 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { Ref, forwardRef, memo, useEffect, useState } from "react";
-import { PutEn2JaReq, PutEn2JaRes, Sentence } from "../types/backend";
+import { PutEn2JaReq, PutEn2JaRes, Sentence } from "@/types/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
-import { accessBackend } from "../services/backend";
+import { accessBackend } from "@/services/backend";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import TestSentences from "./TestSentences";
 import BackdropImage from "./BackdropImage";

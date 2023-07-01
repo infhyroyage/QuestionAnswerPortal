@@ -1,9 +1,7 @@
-"use client";
-
-import { TestDoingSelectorProps } from "../types/props";
+import { TestDoingSelectorProps } from "@/types/props";
 import { Box, Stack } from "@mui/material";
 import ChoiceCard from "./ChoiceCard";
-import { Sentence } from "../types/backend";
+import { Sentence } from "@/types/backend";
 import { memo } from "react";
 
 function TestDoingSelector({

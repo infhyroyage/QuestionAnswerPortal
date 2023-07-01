@@ -1,17 +1,15 @@
-"use client";
-
 import {
   GetQuestion,
   GetQuestionAnswer,
   PutEn2JaReq,
   PutEn2JaRes,
   Sentence,
-} from "../types/backend";
+} from "@/types/backend";
 import {
   FirstTranslation,
   SecondTranslation,
   TestDoingProps,
-} from "../types/props";
+} from "@/types/props";
 import { Box, CircularProgress, Divider, Fab, Tooltip } from "@mui/material";
 import LaunchIcon from "@mui/icons-material/Launch";
 import CheckIcon from "@mui/icons-material/Check";
@@ -22,11 +20,11 @@ import ExplanationsDialog from "./ExplanationsDialog";
 import BackdropImage from "./BackdropImage";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import { isShownSystemErrorSnackbarState, isShownTopProgressState } from "../services/atoms";
-import { accessBackend } from "../services/backend";
-import { Progress } from "../types/progress";
+import { isShownSystemErrorSnackbarState } from "@/services/atoms";
+import { accessBackend } from "@/services/backend";
+import { Progress } from "@/types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
 import TestDoingSelector from "./TestDoingSelector";
 import TestSentences from "./TestSentences";
@@ -58,7 +56,6 @@ function TestDoing({
   getTestRes,
   questionNumber,
   setQuestionNumber,
-  testId,
 }: TestDoingProps) {
   const [getQuestionRes, setGetQuestionRes] =
     useState<GetQuestion>(INIT_GET_QESTION_RES);
@@ -73,9 +70,6 @@ function TestDoing({
     useState<boolean>(false);
   const [isOpenedExplanationsDialog, setIsOpenedExplanationsDialog] =
     useState<boolean>(false);
-  const setIsShownTopProgress = useSetRecoilState<boolean>(
-    isShownTopProgressState
-  );
   const [isShownSnackbar, setIsShownSnackbar] = useState<boolean>(false);
   const setIsShownSystemErrorSnackbar = useSetRecoilState<boolean>(
     isShownSystemErrorSnackbarState
@@ -97,7 +91,7 @@ function TestDoing({
       // [GET] /tests/{testId}/questions/{questionNumber}/answerを実行
       const res: GetQuestionAnswer = await accessBackend<GetQuestionAnswer>(
         "GET",
-        `/tests/${testId}/questions/${questionNumber}/answer`,
+        `/tests/${router.query.testId}/questions/${questionNumber}/answer`,
         instance,
         accountInfo
       );
@@ -114,7 +108,6 @@ function TestDoing({
   const onClickNextQuestionButton = async () => {
     if (questionNumber === getTestRes.length) {
       // 結果へ遷移
-      setIsShownTopProgress(true);
       router.push(`/result`);
     } else {
       // 次問題へ遷移
@@ -147,7 +140,7 @@ function TestDoing({
       };
     } else {
       updatedProgressState = {
-        testId: `${testId}`,
+        testId: `${router.query.testId}`,
         length: getTestRes.length,
         answers: [{ selectedIdxes, isCorrect }],
       };
@@ -155,22 +148,22 @@ function TestDoing({
     localStorage.setItem("progress", JSON.stringify(updatedProgressState));
 
     return isCorrect;
-  }, [getQuestionAnswerRes, getTestRes, selectedIdxes, testId]);
+  }, [getQuestionAnswerRes, getTestRes, router, selectedIdxes]);
 
   // テスト開始後、questionNumberの更新ごとに[GET] /tests/{testId}/questions/{questionNumber}を実行
   useEffect(() => {
-    if (questionNumber !== INIT_QUESTION_NUMBER) {
+    if (router.isReady && questionNumber !== INIT_QUESTION_NUMBER) {
       (async () => {
         const res: GetQuestion = await accessBackend<GetQuestion>(
           "GET",
-          `/tests/${testId}/questions/${questionNumber}`,
+          `/tests/${router.query.testId}/questions/${questionNumber}`,
           instance,
           accountInfo
         );
         setGetQuestionRes(res);
       })();
     }
-  }, [accountInfo, instance, questionNumber, testId]);
+  }, [questionNumber, instance, accountInfo, router]);
 
   // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ問題文・選択肢を翻訳
   useEffect(() => {

@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Card,
   CardContent,
@@ -14,20 +12,20 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { memo, useEffect, useState } from "react";
-import { TestResultTableRowProps } from "../types/props";
+import { TestResultTableRowProps } from "@/types/props";
 import {
   GetQuestion,
   GetQuestionAnswer,
   PutEn2JaReq,
   PutEn2JaRes,
   Sentence,
-} from "../types/backend";
-import { accessBackend } from "../services/backend";
+} from "@/types/backend";
+import { accessBackend } from "@/services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
 import TestSentences from "./TestSentences";
 import LoadingCenter from "./LoadingCenter";
 import { useSetRecoilState } from "recoil";
-import { isShownSystemErrorSnackbarState } from "../services/atoms";
+import { isShownSystemErrorSnackbarState } from "@/services/atoms";
 
 type Responses = Pick<
   GetQuestion & GetQuestionAnswer,

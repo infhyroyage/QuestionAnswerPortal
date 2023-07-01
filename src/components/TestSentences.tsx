@@ -1,11 +1,9 @@
-"use client";
-
-import { Sentence } from "../types/backend";
-import { TestSentencesProps } from "../types/props";
+import { Sentence } from "@/types/backend";
+import { TestSentencesProps } from "@/types/props";
 import { Skeleton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import { memo } from "react";
-import { backdropImageSrcState } from "../services/atoms";
+import { backdropImageSrcState } from "@/services/atoms";
 import { useSetRecoilState } from "recoil";
 
 function TestSentences({ sentences, translatedSentences }: TestSentencesProps) {
