@@ -14,7 +14,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.15",
+    "@mui/material": "^5.14.17",
     "axios": "^1.6.0",
     "eslint": "8.52.0",
     "eslint-config-next": "14.0.1",
