@@ -11,8 +11,8 @@ name: Scan Javascript/Typescript by ESLint
 
 on:
   schedule:
-    # Every Saturday 00:00(UTC)
-    - cron: "0 0 * * 6"
+    # Every 1st of the month at 11:30(UTC)
+    - cron: "30 11 1 * *"
 
 jobs:
   eslint:
