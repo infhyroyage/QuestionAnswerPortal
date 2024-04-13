@@ -36,14 +36,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Replace Secure Environment Variables
-        run: |
-          sed -i \
-            -e 's|VALUE_OF_VITE_API_URI|${{ vars.API_URI }}|g' \
-            -e 's|VALUE_OF_VITE_AZURE_AD_SP_MSAL_CLIENT_ID|${{ vars.AZURE_AD_SP_MSAL_CLIENT_ID }}|g' \
-            -e 's|VALUE_OF_VITE_AZURE_TENANT_ID|${{ vars.AZURE_TENANT_ID }}|g' \
-            .env
-
       - name: Setup Node ${{ env.NODE_VERSION }} Environment
         uses: actions/setup-node@v4
         with:
@@ -64,7 +56,12 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: vite build
+        env:
+          VITE_API_URI: ${{ vars.API_URI }}
+          VITE_AZURE_AD_APP_REDIRECT_URI: https://infhyroyage.github.io/QuestionAnswerPortal
+          VITE_AZURE_AD_SP_MSAL_CLIENT_ID: ${{ vars.AZURE_AD_SP_MSAL_CLIENT_ID }}
+          VITE_AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
