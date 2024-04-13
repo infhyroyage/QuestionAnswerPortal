@@ -8,7 +8,6 @@ on:
       - .github/workflows/build-deploy-pages.yaml
       - public**
       - src**
-      - .env
       - index.html
       - package*.json
       - tsconfig*.json
