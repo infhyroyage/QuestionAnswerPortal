@@ -8,7 +8,6 @@ on:
       - .github/workflows/build-deploy-pages.yaml
       - public**
       - src**
-      - .env
       - index.html
       - package*.json
       - tsconfig*.json
@@ -56,7 +55,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: vite build
+        run: npx vite build
         env:
           VITE_API_URI: ${{ vars.API_URI }}
           VITE_AZURE_AD_APP_REDIRECT_URI: https://infhyroyage.github.io/QuestionAnswerPortal
