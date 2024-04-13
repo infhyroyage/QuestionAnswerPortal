@@ -62,7 +62,7 @@ function TopBar() {
                 </IconButton>
               </Tooltip>
             ) : (
-              process.env.VITE_API_URI !== "http://localhost:9229" && (
+              import.meta.env.VITE_API_URI !== "http://localhost:9229" && (
                 <Tooltip title="ログアウト">
                   <IconButton onClick={onClickLogoutButton}>
                     <LogoutIcon sx={{ color: "white" }} />

@@ -8,7 +8,7 @@ function ApplyMSAL({ children }: ApplyMSALProps) {
   const msalInstance = new PublicClientApplication(config);
 
   // localhost環境の場合はMSALを使用しない
-  return process.env.VITE_API_URI === "http://localhost:9229" ? (
+  return import.meta.env.VITE_API_URI === "http://localhost:9229" ? (
     <>{children}</>
   ) : (
     <MsalProvider instance={msalInstance}>
