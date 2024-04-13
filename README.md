@@ -42,10 +42,10 @@ GitHub Pages を構築せず、localhost の 3000 番のポート上で Web サ�
 
 ### 構築手順
 
-1. 環境変数`REACT_APP_API_URI`に API サーバーのオリジンを記載したファイル`.env.local`を、QuestionAnswerPortal リポジトリ直下に保存する。
+1. 環境変数`VITE_API_URI`に API サーバーのオリジンを記載したファイル`.env.local`を、QuestionAnswerPortal リポジトリ直下に保存する。
    例えば、API サーバーを localhost の 9229 番のポート上で起動し、`http://localhost:9229/api`をエンドポイントに持つ場合、以下の通りに指定する。
    ```
-   REACT_APP_API_URI="http://localhost:9229"
+   VITE_API_URI="http://localhost:9229"
    ```
 2. ターミナルを起動して以下のコマンドを実行し、npm パッケージをインストールする。
    ```bash

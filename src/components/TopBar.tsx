@@ -62,7 +62,7 @@ function TopBar() {
                 </IconButton>
               </Tooltip>
             ) : (
-              process.env.REACT_APP_API_URI !== "http://localhost:9229" && (
+              process.env.VITE_API_URI !== "http://localhost:9229" && (
                 <Tooltip title="ログアウト">
                   <IconButton onClick={onClickLogoutButton}>
                     <LogoutIcon sx={{ color: "white" }} />

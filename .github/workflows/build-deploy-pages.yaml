@@ -39,9 +39,9 @@ jobs:
       - name: Replace Secure Environment Variables
         run: |
           sed -i \
-            -e 's|VALUE_OF_REACT_APP_API_URI|${{ vars.API_URI }}|g' \
-            -e 's|VALUE_OF_REACT_APP_AZURE_AD_SP_MSAL_CLIENT_ID|${{ vars.AZURE_AD_SP_MSAL_CLIENT_ID }}|g' \
-            -e 's|VALUE_OF_REACT_APP_AZURE_TENANT_ID|${{ vars.AZURE_TENANT_ID }}|g' \
+            -e 's|VALUE_OF_VITE_API_URI|${{ vars.API_URI }}|g' \
+            -e 's|VALUE_OF_VITE_AZURE_AD_SP_MSAL_CLIENT_ID|${{ vars.AZURE_AD_SP_MSAL_CLIENT_ID }}|g' \
+            -e 's|VALUE_OF_VITE_AZURE_TENANT_ID|${{ vars.AZURE_TENANT_ID }}|g' \
             .env
 
       - name: Setup Node ${{ env.NODE_VERSION }} Environment

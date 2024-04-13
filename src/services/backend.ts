@@ -65,7 +65,7 @@ export const accessBackend = async <T, D = never>(
   accountInfo: AccountInfo | null,
   data?: D
 ): Promise<T> => {
-  const apiUri: string | undefined = process.env.REACT_APP_API_URI;
+  const apiUri: string | undefined = process.env.VITE_API_URI;
   const url: string = `${apiUri}/api${path}`;
 
   // localhost環境
