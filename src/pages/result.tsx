@@ -1,13 +1,14 @@
-import BackdropImage from "@/components/BackdropImage";
-import NotTranslatedSnackbar from "@/components/NotTranslatedSnackbar";
-import TestResultTableRow from "@/components/TestResultTableRow";
+import { useNavigate } from "react-router-dom";
+import BackdropImage from "../components/BackdropImage";
+import NotTranslatedSnackbar from "../components/NotTranslatedSnackbar";
+import TestResultTableRow from "../components/TestResultTableRow";
 import {
   isShownSystemErrorSnackbarState,
   topBarTitleState,
-} from "@/services/atoms";
-import { accessBackend } from "@/services/backend";
-import { GetTest } from "@/types/backend";
-import { Answer, Progress } from "@/types/progress";
+} from "../services/atoms";
+import { accessBackend } from "../services/backend";
+import { GetTest } from "../types/backend";
+import { Answer, Progress } from "../types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
 import {
   Box,
@@ -21,7 +22,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
 
@@ -30,7 +30,7 @@ const INIT_GET_TEST_RES: GetTest = {
   length: 0,
 };
 
-function Result() {
+export default function Result() {
   const [getTestRes, setGetTestRes] = useState<GetTest>(INIT_GET_TEST_RES);
   const [progress, setProgress] = useState<Progress>({
     testId: "",
@@ -43,7 +43,7 @@ function Result() {
     isShownSystemErrorSnackbarState
   );
 
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
@@ -94,7 +94,7 @@ function Result() {
   return (
     <Box p={2}>
       <Box display="flex" justifyContent="center" alignItems="center" pb={1}>
-        <Button variant="contained" onClick={() => router.push("/")}>
+        <Button variant="contained" onClick={() => navigate("/")}>
           タイトルへ
         </Button>
       </Box>
@@ -139,5 +139,3 @@ function Result() {
     </Box>
   );
 }
-
-export default Result;

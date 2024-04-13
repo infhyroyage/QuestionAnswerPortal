@@ -1,9 +1,8 @@
-import { Sentence } from "@/types/backend";
-import { TestSentencesProps } from "@/types/props";
+import { Sentence } from "../types/backend";
+import { TestSentencesProps } from "../types/props";
 import { Skeleton, Stack, Typography } from "@mui/material";
-import Image from "next/image";
 import { memo } from "react";
-import { backdropImageSrcState } from "@/services/atoms";
+import { backdropImageSrcState } from "../services/atoms";
 import { useSetRecoilState } from "recoil";
 
 function TestSentences({ sentences, translatedSentences }: TestSentencesProps) {
@@ -14,13 +13,14 @@ function TestSentences({ sentences, translatedSentences }: TestSentencesProps) {
       {sentences.length > 0 ? (
         sentences.map((subject: Sentence, idx: number) =>
           subject.isIndicatedImg ? (
-            <Image
+            <img
               key={idx}
               src={subject.sentence}
               alt={`${idx + 1}th Picture`}
-              width={160}
-              height={120}
+              width="160"
+              height="120"
               onClick={() => setBackdropSrc(subject.sentence)}
+              style={{ cursor: "pointer" }}
             />
           ) : (
             <div key={idx}>

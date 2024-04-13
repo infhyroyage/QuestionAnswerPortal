@@ -8,19 +8,19 @@ import ArticleIcon from "@mui/icons-material/Article";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import React, { useEffect, useState } from "react";
-import { GetTests, Test } from "@/types/backend";
-import { accessBackend } from "@/services/backend";
+import { GetTests, Test } from "../types/backend";
+import { accessBackend } from "../services/backend";
 import { useAccount, useMsal } from "@azure/msal-react";
 import { Divider, Skeleton } from "@mui/material";
-import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
 import {
   isShownSystemErrorSnackbarState,
   topBarTitleState,
-} from "@/services/atoms";
+} from "../services/atoms";
 import RestoreIcon from "@mui/icons-material/Restore";
+import { useNavigate } from "react-router-dom";
 
-function Home() {
+export default function Root() {
   const [opens, setOpens] = useState<boolean[]>([]);
   const [getTestsRes, setGetTestsRes] = useState<GetTests>({});
   const [storedTestId, setStoredTestId] = useState<string>("");
@@ -32,7 +32,7 @@ function Home() {
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
 
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleClickOuterListItemButton = (i: number) => {
     const updatedOpens = [...opens];
@@ -97,7 +97,7 @@ function Home() {
                 {getTestsRes[course].map((test: Test) => (
                   <ListItemButton
                     key={test.id}
-                    onClick={() => router.push(`/tests/${test.id}`)}
+                    onClick={() => navigate(`/tests/${test.id}`)}
                   >
                     <ListItemIcon sx={{ ml: 2 }}>
                       <ArticleIcon />
@@ -125,5 +125,3 @@ function Home() {
     </List>
   );
 }
-
-export default Home;

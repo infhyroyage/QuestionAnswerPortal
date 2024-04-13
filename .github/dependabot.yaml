@@ -17,9 +17,9 @@ updates:
       - dependency-name: "@types/node"
       - dependency-name: "@types/react"
       - dependency-name: "@types/react-dom"
-      - dependency-name: "next"
       - dependency-name: "react"
       - dependency-name: "react-dom"
+      - dependency-name: "react-router-dom"
       - dependency-name: "typescript"
     labels: []
     reviewers:

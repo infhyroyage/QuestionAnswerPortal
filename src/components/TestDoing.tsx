@@ -4,12 +4,12 @@ import {
   PutEn2JaReq,
   PutEn2JaRes,
   Sentence,
-} from "@/types/backend";
+} from "../types/backend";
 import {
   FirstTranslation,
   SecondTranslation,
   TestDoingProps,
-} from "@/types/props";
+} from "../types/props";
 import { Box, CircularProgress, Divider, Fab, Tooltip } from "@mui/material";
 import LaunchIcon from "@mui/icons-material/Launch";
 import CheckIcon from "@mui/icons-material/Check";
@@ -20,14 +20,14 @@ import ExplanationsDialog from "./ExplanationsDialog";
 import BackdropImage from "./BackdropImage";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
-import { isShownSystemErrorSnackbarState } from "@/services/atoms";
-import { accessBackend } from "@/services/backend";
-import { Progress } from "@/types/progress";
+import { isShownSystemErrorSnackbarState } from "../services/atoms";
+import { accessBackend } from "../services/backend";
+import { Progress } from "../types/progress";
 import { useAccount, useMsal } from "@azure/msal-react";
 import TestDoingSelector from "./TestDoingSelector";
 import TestSentences from "./TestSentences";
+import { useNavigate, useParams } from "react-router-dom";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_QESTION_RES: GetQuestion = {
@@ -75,7 +75,8 @@ function TestDoing({
     isShownSystemErrorSnackbarState
   );
 
-  const router = useRouter();
+  const navigate = useNavigate();
+  const { testId } = useParams();
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
@@ -91,7 +92,7 @@ function TestDoing({
       // [GET] /tests/{testId}/questions/{questionNumber}/answerを実行
       const res: GetQuestionAnswer = await accessBackend<GetQuestionAnswer>(
         "GET",
-        `/tests/${router.query.testId}/questions/${questionNumber}/answer`,
+        `/tests/${testId}/questions/${questionNumber}/answer`,
         instance,
         accountInfo
       );
@@ -108,7 +109,7 @@ function TestDoing({
   const onClickNextQuestionButton = async () => {
     if (questionNumber === getTestRes.length) {
       // 結果へ遷移
-      router.push(`/result`);
+      navigate(`/result`);
     } else {
       // 次問題へ遷移
       setSecondTranslation(INIT_2ND_TRANSLATION);
@@ -121,18 +122,18 @@ function TestDoing({
   };
 
   /**
-   * 正解した場合はtrue、未回答or不正解の場合はfalse
+   * 正解した場合はtrue、それ以外の場合はfalse
    */
   const isCorrect: boolean = useMemo(() => {
-    // 未回答の場合はNOP
-    if (getQuestionAnswerRes.correctIdxes.length === 0) return false;
+    // クエリパラメータ不正/未回答の場合はNOP
+    if (!testId || getQuestionAnswerRes.correctIdxes.length === 0) return false;
 
     // 回答済の場合、正解/不正解の結果を判定し、Local Storageに保存
     const isCorrect: boolean =
       selectedIdxes.toString() === getQuestionAnswerRes.correctIdxes.toString();
     let updatedProgressState: Progress;
     const progressStr: string | null = localStorage.getItem("progress");
-    if (!!progressStr) {
+    if (progressStr) {
       const progress: Progress = JSON.parse(progressStr);
       updatedProgressState = {
         ...progress,
@@ -140,7 +141,7 @@ function TestDoing({
       };
     } else {
       updatedProgressState = {
-        testId: `${router.query.testId}`,
+        testId,
         length: getTestRes.length,
         answers: [{ selectedIdxes, isCorrect }],
       };
@@ -148,22 +149,22 @@ function TestDoing({
     localStorage.setItem("progress", JSON.stringify(updatedProgressState));
 
     return isCorrect;
-  }, [getQuestionAnswerRes, getTestRes, router, selectedIdxes]);
+  }, [getQuestionAnswerRes, getTestRes, selectedIdxes, testId]);
 
   // テスト開始後、questionNumberの更新ごとに[GET] /tests/{testId}/questions/{questionNumber}を実行
   useEffect(() => {
-    if (router.isReady && questionNumber !== INIT_QUESTION_NUMBER) {
+    if (testId && questionNumber !== INIT_QUESTION_NUMBER) {
       (async () => {
         const res: GetQuestion = await accessBackend<GetQuestion>(
           "GET",
-          `/tests/${router.query.testId}/questions/${questionNumber}`,
+          `/tests/${testId}/questions/${questionNumber}`,
           instance,
           accountInfo
         );
         setGetQuestionRes(res);
       })();
     }
-  }, [questionNumber, instance, accountInfo, router]);
+  }, [accountInfo, instance, questionNumber, testId]);
 
   // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ問題文・選択肢を翻訳
   useEffect(() => {

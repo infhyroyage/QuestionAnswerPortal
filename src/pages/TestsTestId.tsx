@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useAccount, useMsal } from "@azure/msal-react";
-import { GetTest } from "@/types/backend";
-import { accessBackend } from "@/services/backend";
-import TestReady from "@/components/TestReady";
-import TestDoing from "@/components/TestDoing";
+import { GetTest } from "../types/backend";
+import { accessBackend } from "../services/backend";
+import TestReady from "../components/TestReady";
+import TestDoing from "../components/TestDoing";
 import { useSetRecoilState } from "recoil";
 import {
   isShownSystemErrorSnackbarState,
   topBarTitleState,
-} from "@/services/atoms";
+} from "../services/atoms";
+import { useParams } from "react-router-dom";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_TEST_RES: GetTest = {
@@ -17,7 +17,7 @@ const INIT_GET_TEST_RES: GetTest = {
   length: 0,
 };
 
-function TestsTestId() {
+export default function TestsTestId() {
   const [questionNumber, setQuestionNumber] =
     useState<number>(INIT_QUESTION_NUMBER);
   const [getTestRes, setGetTestRes] = useState<GetTest>(INIT_GET_TEST_RES);
@@ -26,15 +26,14 @@ function TestsTestId() {
     isShownSystemErrorSnackbarState
   );
 
-  const router = useRouter();
+  const { testId } = useParams();
 
   const { instance, accounts } = useMsal();
   const accountInfo = useAccount(accounts[0] || {});
 
   // クライアントサイドでの初回レンダリング時のみ[GET] /tests/{testId}を実行
   useEffect(() => {
-    if (router.isReady) {
-      const { testId } = router.query;
+    if (testId) {
       (async () => {
         try {
           const res: GetTest = await accessBackend<GetTest>(
@@ -50,7 +49,7 @@ function TestsTestId() {
         }
       })();
     }
-  }, [accountInfo, instance, router, setIsShownSystemErrorSnackbar]);
+  }, [accountInfo, instance, setIsShownSystemErrorSnackbar, testId]);
 
   useEffect(() => {
     if (getTestRes.testName !== "") {
@@ -72,5 +71,3 @@ function TestsTestId() {
     />
   );
 }
-
-export default TestsTestId;

@@ -1,6 +1,5 @@
-import { backdropImageSrcState } from "@/services/atoms";
+import { backdropImageSrcState } from "../services/atoms";
 import { Backdrop } from "@mui/material";
-import Image from "next/image";
 import { memo } from "react";
 import { useRecoilState } from "recoil";
 
@@ -16,11 +15,10 @@ function BackdropImage() {
       sx={{ zIndex: (theme) => theme.zIndex.tooltip + 1 }}
     >
       {backdropSrc.length > 0 && (
-        <Image
+        <img
           src={backdropSrc}
           alt={"Backdrop Picture"}
-          fill
-          style={{ objectFit: "contain" }}
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
         />
       )}
     </Backdrop>

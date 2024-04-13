@@ -5,12 +5,12 @@ import { Configuration } from "@azure/msal-browser";
  */
 export const config: Configuration = {
   auth: {
-    clientId: `${process.env.NEXT_PUBLIC_AZURE_AD_SP_MSAL_CLIENT_ID}`,
-    authority: `https://login.microsoftonline.com/${process.env.NEXT_PUBLIC_AZURE_TENANT_ID}`,
+    clientId: `${process.env.REACT_APP_AZURE_AD_SP_MSAL_CLIENT_ID}`,
+    authority: `https://login.microsoftonline.com/${process.env.REACT_APP_AZURE_TENANT_ID}`,
     // ログイン後のリダイレクト先
-    redirectUri: `${process.env.NEXT_PUBLIC_AZURE_AD_APP_REDIRECT_URI}`,
+    redirectUri: `${process.env.REACT_APP_AZURE_AD_APP_REDIRECT_URI}`,
     // ログアウト後のリダイレクト先
-    postLogoutRedirectUri: `${process.env.NEXT_PUBLIC_AZURE_AD_APP_REDIRECT_URI}`,
+    postLogoutRedirectUri: `${process.env.REACT_APP_AZURE_AD_APP_REDIRECT_URI}`,
   },
   cache: {
     // アクセストークンの格納先
@@ -32,6 +32,6 @@ export const loginScope = {
  */
 export const backendAccessScopes = {
   accessAsUser: [
-    `api://${process.env.NEXT_PUBLIC_AZURE_AD_SP_MSAL_CLIENT_ID}/access_as_user`,
+    `api://${process.env.REACT_APP_AZURE_AD_SP_MSAL_CLIENT_ID}/access_as_user`,
   ],
 };

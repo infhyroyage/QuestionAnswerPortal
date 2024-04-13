@@ -6,7 +6,7 @@ import {
 } from "@azure/msal-browser";
 import axios, { AxiosHeaders, AxiosResponse } from "axios";
 import { backendAccessScopes } from "./msal";
-import { Method } from "@/types/backend";
+import { Method } from "../types/backend";
 
 /**
  * axiosを用いて、バックエンドのREST APIにアクセスしたレスポンスをそのまま返す
@@ -22,7 +22,7 @@ const callByAxios = async <T, D>(
   accessToken?: string | undefined,
   data?: D
 ): Promise<T> => {
-  let headers: AxiosHeaders | undefined = accessToken
+  const headers: AxiosHeaders | undefined = accessToken
     ? new AxiosHeaders({
         "X-Access-Token": accessToken,
       })
@@ -58,14 +58,14 @@ const callByAxios = async <T, D>(
  * @param {D | undefined} data リクエストデータ
  * @returns {Promise<T>} レスポンス
  */
-export const accessBackend = async <T, D = any>(
+export const accessBackend = async <T, D = never>(
   method: Method,
   path: string,
   instance: IPublicClientApplication,
   accountInfo: AccountInfo | null,
   data?: D
 ): Promise<T> => {
-  const apiUri: string | undefined = process.env.NEXT_PUBLIC_API_URI;
+  const apiUri: string | undefined = process.env.REACT_APP_API_URI;
   const url: string = `${apiUri}/api${path}`;
 
   // localhost環境
@@ -84,14 +84,10 @@ export const accessBackend = async <T, D = any>(
     return await callByAxios<T, D>(method, url, msalRes.accessToken, data);
   } catch (err) {
     if (err instanceof InteractionRequiredAuthError) {
-      try {
-        const msalRes: AuthenticationResult = await instance.acquireTokenPopup({
-          scopes: backendAccessScopes.accessAsUser,
-        });
-        return await callByAxios<T, D>(method, url, msalRes.accessToken, data);
-      } catch (e) {
-        throw e;
-      }
+      const msalRes: AuthenticationResult = await instance.acquireTokenPopup({
+        scopes: backendAccessScopes.accessAsUser,
+      });
+      return await callByAxios<T, D>(method, url, msalRes.accessToken, data);
     } else {
       throw err;
     }

@@ -1,4 +1,4 @@
-import { isShownSystemErrorSnackbarState } from "@/services/atoms";
+import { isShownSystemErrorSnackbarState } from "../services/atoms";
 import { Alert, Snackbar } from "@mui/material";
 import { memo } from "react";
 import { useRecoilState } from "recoil";
