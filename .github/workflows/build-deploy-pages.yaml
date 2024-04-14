@@ -55,7 +55,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npx vite build
+        run: npm run build
         env:
           VITE_API_URI: ${{ vars.API_URI }}
           VITE_AZURE_AD_APP_REDIRECT_URI: https://infhyroyage.github.io/QuestionAnswerPortal
