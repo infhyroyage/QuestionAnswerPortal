@@ -43,7 +43,11 @@ function TopBar() {
 
   const onClickBackspaceButton = () => {
     setTopBarTitle("Question Answer Portal");
-    navigate("/");
+    navigate(
+      import.meta.env.VITE_API_URI === "http://localhost:9229"
+        ? "/"
+        : "/QuestionAnswerPortal/"
+    );
   };
 
   return (
@@ -54,21 +58,30 @@ function TopBar() {
             {topBarTitle}
           </Typography>
           <Stack direction="row" spacing={3}>
-            {location.pathname === "/" && <ThemeSwitch />}
-            {location.pathname !== "/" ? (
-              <Tooltip title="タイトルへ">
-                <IconButton onClick={onClickBackspaceButton}>
-                  <BackspaceIcon sx={{ color: "white" }} />
-                </IconButton>
-              </Tooltip>
+            <ThemeSwitch />
+            {import.meta.env.VITE_API_URI === "http://localhost:9229" ? (
+              location.pathname !== "/" && (
+                <Tooltip title="タイトルへ">
+                  <IconButton onClick={onClickBackspaceButton}>
+                    <BackspaceIcon sx={{ color: "white" }} />
+                  </IconButton>
+                </Tooltip>
+              )
             ) : (
-              import.meta.env.VITE_API_URI !== "http://localhost:9229" && (
+              <>
+                {location.pathname !== "/QuestionAnswerPortal/" && (
+                  <Tooltip title="タイトルへ">
+                    <IconButton onClick={onClickBackspaceButton}>
+                      <BackspaceIcon sx={{ color: "white" }} />
+                    </IconButton>
+                  </Tooltip>
+                )}
                 <Tooltip title="ログアウト">
                   <IconButton onClick={onClickLogoutButton}>
                     <LogoutIcon sx={{ color: "white" }} />
                   </IconButton>
                 </Tooltip>
-              )
+              </>
             )}
           </Stack>
         </Toolbar>

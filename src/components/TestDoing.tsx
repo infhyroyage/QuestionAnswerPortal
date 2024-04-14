@@ -109,7 +109,11 @@ function TestDoing({
   const onClickNextQuestionButton = async () => {
     if (questionNumber === getTestRes.length) {
       // 結果へ遷移
-      navigate(`/result`);
+      navigate(
+        import.meta.env.VITE_API_URI === "http://localhost:9229"
+          ? "/result"
+          : "/QuestionAnswerPortal/result"
+      );
     } else {
       // 次問題へ遷移
       setSecondTranslation(INIT_2ND_TRANSLATION);

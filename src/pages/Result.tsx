@@ -94,7 +94,16 @@ export default function Result() {
   return (
     <Box p={2}>
       <Box display="flex" justifyContent="center" alignItems="center" pb={1}>
-        <Button variant="contained" onClick={() => navigate("/")}>
+        <Button
+          variant="contained"
+          onClick={() =>
+            navigate(
+              import.meta.env.VITE_API_URI === "http://localhost:9229"
+                ? "/"
+                : "/QuestionAnswerPortal/"
+            )
+          }
+        >
           タイトルへ
         </Button>
       </Box>

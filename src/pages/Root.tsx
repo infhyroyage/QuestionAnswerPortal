@@ -97,7 +97,13 @@ export default function Root() {
                 {getTestsRes[course].map((test: Test) => (
                   <ListItemButton
                     key={test.id}
-                    onClick={() => navigate(`/tests/${test.id}`)}
+                    onClick={() =>
+                      navigate(
+                        import.meta.env.VITE_API_URI === "http://localhost:9229"
+                          ? `/tests/${test.id}`
+                          : `/QuestionAnswerPortal/tests/${test.id}`
+                      )
+                    }
                   >
                     <ListItemIcon sx={{ ml: 2 }}>
                       <ArticleIcon />
