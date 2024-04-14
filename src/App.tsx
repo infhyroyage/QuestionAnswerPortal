@@ -10,7 +10,10 @@ import Result from "./pages/Result";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path:
+      import.meta.env.VITE_API_URI === "http://localhost:9229"
+        ? "/"
+        : "/QuestionAnswerPortal/",
     element: (
       <>
         <TopBar />
@@ -19,7 +22,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "tests/:testId",
+    path:
+      import.meta.env.VITE_API_URI === "http://localhost:9229"
+        ? "/tests/:testId"
+        : "/QuestionAnswerPortal/tests/:testId",
     element: (
       <>
         <TopBar />
@@ -28,7 +34,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "result",
+    path:
+      import.meta.env.VITE_API_URI === "http://localhost:9229"
+        ? "/result"
+        : "/QuestionAnswerPortal/result",
     element: (
       <>
         <TopBar />
