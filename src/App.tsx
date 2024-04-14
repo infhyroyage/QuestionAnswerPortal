@@ -6,20 +6,35 @@ import TopBar from "./components/TopBar";
 import SystemErrorSnackbar from "./components/SystemErrorSnackbar";
 import Root from "./pages/Root";
 import TestsTestId from "./pages/TestsTestId";
-import Result from "./pages/result";
+import Result from "./pages/Result";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: (
+      <>
+        <TopBar />
+        <Root />
+      </>
+    ),
   },
   {
     path: "tests/:testId",
-    element: <TestsTestId />,
+    element: (
+      <>
+        <TopBar />
+        <TestsTestId />
+      </>
+    ),
   },
   {
     path: "result",
-    element: <Result />,
+    element: (
+      <>
+        <TopBar />
+        <Result />
+      </>
+    ),
   },
 ]);
 
@@ -28,7 +43,6 @@ export default function App() {
     <RecoilRoot>
       <ApplyMUI>
         <ApplyMSAL>
-          <TopBar />
           <RouterProvider router={router} />
         </ApplyMSAL>
         <SystemErrorSnackbar />
