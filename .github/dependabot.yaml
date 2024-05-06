@@ -9,7 +9,7 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-      time: "18:00"
+      time: "16:30"
       timezone: "Asia/Tokyo"
     assignees:
       - "infhyroyage"
@@ -29,7 +29,7 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-      time: "19:00"
+      time: "17:00"
       timezone: "Asia/Tokyo"
     assignees:
       - "infhyroyage"
