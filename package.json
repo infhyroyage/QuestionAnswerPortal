@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint": "eslint '**/*.{ts,tsx}'"
+    "lint": "eslint"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.38.3",
