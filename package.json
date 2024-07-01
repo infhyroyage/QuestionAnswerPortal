@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@azure/msal-browser": "^2.38.3",
+    "@azure/msal-browser": "^2.39.0",
     "@azure/msal-react": "^1.5.11",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
