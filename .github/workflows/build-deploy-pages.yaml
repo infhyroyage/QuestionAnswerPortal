@@ -58,7 +58,6 @@ jobs:
         run: npm run build
         env:
           VITE_API_URI: ${{ vars.API_URI }}
-          VITE_AZURE_AD_APP_REDIRECT_URI: https://infhyroyage.github.io/QuestionAnswerPortal
           VITE_AZURE_AD_SP_MSAL_CLIENT_ID: ${{ vars.AZURE_AD_SP_MSAL_CLIENT_ID }}
           VITE_AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
 

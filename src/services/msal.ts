@@ -10,9 +10,9 @@ export const config: Configuration = {
       import.meta.env.VITE_AZURE_TENANT_ID
     }`,
     // ログイン後のリダイレクト先
-    redirectUri: `${import.meta.env.VITE_AZURE_AD_APP_REDIRECT_URI}`,
+    redirectUri: "https://infhyroyage.github.io/QuestionAnswerPortal",
     // ログアウト後のリダイレクト先
-    postLogoutRedirectUri: `${import.meta.env.VITE_AZURE_AD_APP_REDIRECT_URI}`,
+    postLogoutRedirectUri: "https://infhyroyage.github.io/QuestionAnswerPortal",
   },
   cache: {
     // アクセストークンの格納先
