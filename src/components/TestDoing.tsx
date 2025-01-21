@@ -1,3 +1,15 @@
+import { useAccount, useMsal } from "@azure/msal-react";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+import LaunchIcon from "@mui/icons-material/Launch";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import { Box, CircularProgress, Divider, Fab, Tooltip } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { isShownSystemErrorSnackbarState } from "../services/atoms";
+import { accessBackend } from "../services/backend";
 import {
   GetQuestion,
   GetQuestionAnswer,
@@ -5,29 +17,17 @@ import {
   PutEn2JaRes,
   Sentence,
 } from "../types/backend";
+import { Progress } from "../types/progress";
 import {
   FirstTranslation,
   SecondTranslation,
   TestDoingProps,
 } from "../types/props";
-import { Box, CircularProgress, Divider, Fab, Tooltip } from "@mui/material";
-import LaunchIcon from "@mui/icons-material/Launch";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
-import ExplanationsDialog from "./ExplanationsDialog";
 import BackdropImage from "./BackdropImage";
+import ExplanationsDialog from "./ExplanationsDialog";
 import NotTranslatedSnackbar from "./NotTranslatedSnackbar";
-import { useEffect, useMemo, useState } from "react";
-import { useSetRecoilState } from "recoil";
-import { isShownSystemErrorSnackbarState } from "../services/atoms";
-import { accessBackend } from "../services/backend";
-import { Progress } from "../types/progress";
-import { useAccount, useMsal } from "@azure/msal-react";
 import TestDoingSelector from "./TestDoingSelector";
 import TestSentences from "./TestSentences";
-import { useNavigate, useParams } from "react-router-dom";
 
 const INIT_QUESTION_NUMBER: number = 0;
 const INIT_GET_QESTION_RES: GetQuestion = {
@@ -172,8 +172,7 @@ function TestDoing({
 
   // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ問題文・選択肢を翻訳
   useEffect(() => {
-    getQuestionRes.subjects.length &&
-      getQuestionRes.choices.length &&
+    if (getQuestionRes.subjects.length && getQuestionRes.choices.length) {
       (async () => {
         // subjects、choicesそれぞれの文字列に対して翻訳を複数回行わず、
         // subjects、choicesの順で配列を作成した文字列に対して翻訳を1回のみ行う
@@ -209,10 +208,11 @@ function TestDoing({
                 : (res.shift() as string)
           );
           setFirstTranslation({ subjects, choices });
-        } catch (e) {
+        } catch {
           setIsShownSnackbar(true);
         }
       })();
+    }
   }, [accountInfo, getQuestionRes, instance]);
 
   return (
