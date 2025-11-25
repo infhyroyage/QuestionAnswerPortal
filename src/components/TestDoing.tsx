@@ -2,6 +2,7 @@ import { useAccount, useMsal } from "@azure/msal-react";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import LaunchIcon from "@mui/icons-material/Launch";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { Box, CircularProgress, Divider, Fab, Tooltip } from "@mui/material";
@@ -125,6 +126,26 @@ function TestDoing({
     }
   };
 
+  const onClickPreviousAnsweredQuestionButton = async () => {
+    // 前の回答済み問題へ遷移
+    setSecondTranslation(INIT_2ND_TRANSLATION);
+    setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
+    setSelectedIdxes([]);
+    setFirstTranslation(INIT_1ST_TRANSLATION);
+    setGetQuestionRes(INIT_GET_QESTION_RES);
+    setQuestionNumber(questionNumber - 1);
+  };
+
+  const onClickNextAnsweredQuestionButton = async () => {
+    // 次の回答済み問題へ遷移
+    setSecondTranslation(INIT_2ND_TRANSLATION);
+    setGetQuestionAnswerRes(INIT_GET_QESTION_ANSWER_RES);
+    setSelectedIdxes([]);
+    setFirstTranslation(INIT_1ST_TRANSLATION);
+    setGetQuestionRes(INIT_GET_QESTION_RES);
+    setQuestionNumber(questionNumber + 1);
+  };
+
   /**
    * 正解した場合はtrue、それ以外の場合はfalse
    */
@@ -135,10 +156,23 @@ function TestDoing({
     // 回答済の場合、正解/不正解の結果を判定し、Local Storageに保存
     const isCorrect: boolean =
       selectedIdxes.toString() === getQuestionAnswerRes.correctIdxes.toString();
-    let updatedProgressState: Progress;
+    
     const progressStr: string | null = localStorage.getItem("progress");
-    if (progressStr) {
-      const progress: Progress = JSON.parse(progressStr);
+    let progress: Progress | null = progressStr ? JSON.parse(progressStr) : null;
+    
+    // 既に現在の問題番号に対する回答が保存されている場合は、再度保存しない
+    if (
+      progress &&
+      progress.testId === testId &&
+      progress.answers.length >= questionNumber
+    ) {
+      // 既存の回答データから正解/不正解を取得
+      return progress.answers[questionNumber - 1].isCorrect;
+    }
+
+    // 新規回答の場合のみLocalStorageに保存
+    let updatedProgressState: Progress;
+    if (progress) {
       updatedProgressState = {
         ...progress,
         answers: [...progress.answers, { selectedIdxes, isCorrect }],
@@ -153,7 +187,41 @@ function TestDoing({
     localStorage.setItem("progress", JSON.stringify(updatedProgressState));
 
     return isCorrect;
-  }, [getQuestionAnswerRes, getTestRes, selectedIdxes, testId]);
+  }, [getQuestionAnswerRes, getTestRes, selectedIdxes, testId, questionNumber]);
+
+  /**
+   * PreviousAnsweredQuestionButtonの活性/非活性を判定
+   * 前の問題(questionNumber - 1)が回答済みの場合に活性
+   */
+  const isPreviousAnsweredQuestionButtonEnabled: boolean = useMemo(() => {
+    if (!testId || questionNumber <= 1) return false;
+
+    const progressStr: string | null = localStorage.getItem("progress");
+    if (!progressStr) return false;
+
+    const progress: Progress = JSON.parse(progressStr);
+    // 前の問題が回答済みかチェック
+    return (
+      progress.testId === testId && progress.answers.length >= questionNumber - 1
+    );
+  }, [testId, questionNumber]);
+
+  /**
+   * NextAnsweredQuestionButtonの活性/非活性を判定
+   * 次の問題(questionNumber + 1)が回答済みの場合に活性
+   */
+  const isNextAnsweredQuestionButtonEnabled: boolean = useMemo(() => {
+    if (!testId) return false;
+
+    const progressStr: string | null = localStorage.getItem("progress");
+    if (!progressStr) return false;
+
+    const progress: Progress = JSON.parse(progressStr);
+    // 次の問題が回答済みかチェック
+    return (
+      progress.testId === testId && progress.answers.length >= questionNumber + 1
+    );
+  }, [testId, questionNumber]);
 
   // テスト開始後、questionNumberの更新ごとに[GET] /tests/{testId}/questions/{questionNumber}を実行
   useEffect(() => {
@@ -169,6 +237,48 @@ function TestDoing({
       })();
     }
   }, [accountInfo, instance, questionNumber, testId]);
+
+  // questionNumberが変更されたら、LocalStorageから回答済みデータを復元
+  useEffect(() => {
+    if (testId && questionNumber !== INIT_QUESTION_NUMBER) {
+      const progressStr: string | null = localStorage.getItem("progress");
+      if (progressStr) {
+        const progress: Progress = JSON.parse(progressStr);
+        // 現在の問題番号に対応する回答があるかチェック（questionNumberは1-indexed）
+        if (
+          progress.testId === testId &&
+          progress.answers.length >= questionNumber
+        ) {
+          const answer = progress.answers[questionNumber - 1];
+          // 回答データを復元
+          setSelectedIdxes(answer.selectedIdxes);
+          
+          // 回答済みの場合は、解答データも取得
+          (async () => {
+            try {
+              const res: GetQuestionAnswer =
+                await accessBackend<GetQuestionAnswer>(
+                  "GET",
+                  `/tests/${testId}/questions/${questionNumber}/answer`,
+                  instance,
+                  accountInfo
+                );
+              setGetQuestionAnswerRes(res);
+            } catch (e) {
+              console.error(e);
+              setIsShownSystemErrorSnackbar(true);
+            }
+          })();
+        }
+      }
+    }
+  }, [
+    accountInfo,
+    instance,
+    questionNumber,
+    testId,
+    setIsShownSystemErrorSnackbar,
+  ]);
 
   // [GET] /tests/{testId}/questions/{questionNumber}実行直後のみ問題文・選択肢を翻訳
   useEffect(() => {
@@ -314,6 +424,42 @@ function TestDoing({
             color="info"
             disabled={getQuestionAnswerRes.correctIdxes.length === 0}
             onClick={onClickNextQuestionButton}
+            sx={{ zIndex: (theme) => theme.zIndex.tooltip }}
+          >
+            <NavigateNextIcon />
+          </Fab>
+        </span>
+      </Tooltip>
+      <Tooltip title="前の回答済み問題へ" placement="top">
+        <span
+          style={{
+            position: "absolute",
+            bottom: "calc(40% + 20px)",
+            left: "20px",
+          }}
+        >
+          <Fab
+            color="info"
+            disabled={!isPreviousAnsweredQuestionButtonEnabled}
+            onClick={onClickPreviousAnsweredQuestionButton}
+            sx={{ zIndex: (theme) => theme.zIndex.tooltip }}
+          >
+            <NavigateBeforeIcon />
+          </Fab>
+        </span>
+      </Tooltip>
+      <Tooltip title="次の回答済み問題へ" placement="top">
+        <span
+          style={{
+            position: "absolute",
+            bottom: "calc(40% + 20px)",
+            left: "120px",
+          }}
+        >
+          <Fab
+            color="info"
+            disabled={!isNextAnsweredQuestionButtonEnabled}
+            onClick={onClickNextAnsweredQuestionButton}
             sx={{ zIndex: (theme) => theme.zIndex.tooltip }}
           >
             <NavigateNextIcon />
